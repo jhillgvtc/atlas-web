@@ -71,3 +71,4 @@ All configuration is stored in localStorage:
 ---
 
 Built with ❤️ for Pressings App monetization tracking
+
