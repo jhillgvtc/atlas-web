@@ -1,9 +1,0 @@
-{
-  "name": "agent-dashboard",
-  "version": "1.0.0",
-  "description": "Agent Team Activity Dashboard",
-  "scripts": {
-    "start": "npx serve .",
-    "dev": "npx serve ."
-  }
-}
