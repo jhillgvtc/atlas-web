@@ -1246,10 +1246,8 @@
         return res.json();
       })
       .then(function(data) {
-        // Use fallback agents if data.agents is missing or empty
-        if (!data.agents || data.agents.length === 0) {
-          data.agents = FALLBACK_AGENTS;
-        }
+        // ALWAYS use current fallback agents (S3 data may be stale)
+        data.agents = FALLBACK_AGENTS;
 
         // Update stats to reflect correct agent count
         if (!data.stats) data.stats = {};
