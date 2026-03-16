@@ -3,47 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pressings Command Center</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128191;</text></svg>">
+    <title>Pressings Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💿</text></svg>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #121212;
-            --bg-card: #1e1e1e;
-            --bg-elevated: #2a2a2a;
-            --bg-input: #333333;
-            --border: #3a3a3a;
-            --border-light: #4a4a4a;
+            --bg: #0e0e0e;
+            --surface: #1a1a1a;
+            --surface-2: #242424;
+            --surface-3: #2e2e2e;
+            --border: #333;
+            --border-hover: #444;
             --text: #f0f0f0;
-            --text-muted: #a0a0a0;
-            --text-dim: #666666;
-            --accent: #e85d04;
-            --accent-light: #ff7b2e;
-            --accent-dim: rgba(232, 93, 4, 0.15);
+            --text-2: #a0a0a0;
+            --text-3: #666;
+            --orange: #e85d04;
+            --orange-soft: rgba(232, 93, 4, 0.12);
+            --orange-mid: rgba(232, 93, 4, 0.25);
             --green: #22c55e;
-            --green-dim: rgba(34, 197, 94, 0.12);
-            --yellow: #eab308;
-            --yellow-dim: rgba(234, 179, 8, 0.12);
+            --green-soft: rgba(34, 197, 94, 0.12);
             --red: #ef4444;
-            --red-dim: rgba(239, 68, 68, 0.12);
+            --red-soft: rgba(239, 68, 68, 0.12);
+            --yellow: #eab308;
+            --yellow-soft: rgba(234, 179, 8, 0.12);
             --blue: #3b82f6;
-            --blue-dim: rgba(59, 130, 246, 0.12);
-            --purple: #a78bfa;
-            --radius: 12px;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --blue-soft: rgba(59, 130, 246, 0.12);
+            --radius: 10px;
         }
 
         [data-theme="light"] {
-            --bg: #f8f8f8;
-            --bg-card: #ffffff;
-            --bg-elevated: #f0f0f0;
-            --bg-input: #e8e8e8;
-            --border: #e0e0e0;
-            --border-light: #d0d0d0;
-            --text: #1a1a1a;
-            --text-muted: #666666;
-            --text-dim: #999999;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --bg: #f5f5f5;
+            --surface: #ffffff;
+            --surface-2: #f0f0f0;
+            --surface-3: #e8e8e8;
+            --border: #ddd;
+            --border-hover: #ccc;
+            --text: #111;
+            --text-2: #555;
+            --text-3: #999;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,263 +49,131 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: var(--bg);
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        /* --- Header --- */
-        .header {
-            background: var(--bg-card);
+        /* Header */
+        .hdr {
+            background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 0 2rem;
+            padding: 0 1.5rem;
             position: sticky;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(12px);
+            z-index: 50;
         }
 
-        .header-inner {
-            max-width: 1400px;
+        .hdr-inner {
+            max-width: 1320px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
+            height: 54px;
         }
 
-        .header-brand {
+        .hdr-brand {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-        }
-
-        .header-brand h1 {
-            font-size: 1.25rem;
+            gap: 0.6rem;
             font-weight: 700;
+            font-size: 1.1rem;
         }
 
-        .vinyl-icon {
-            width: 32px;
-            height: 32px;
+        .vinyl {
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, #333, #555, #333, #555, #333);
+            background: conic-gradient(#222, #444, #222, #444, #222);
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            animation: spin 4s linear infinite;
+            animation: spin 3s linear infinite;
         }
 
-        .vinyl-icon::after {
+        .vinyl::after {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background: var(--accent);
+            background: var(--orange);
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .header-controls {
+        .hdr-r {
             display: flex;
             gap: 0.5rem;
             align-items: center;
         }
 
-        .header-status {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-right: 1rem;
+        .hdr-status {
+            font-size: 0.72rem;
+            color: var(--text-3);
+            margin-right: 0.5rem;
         }
 
+        .hdr-status .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .dot-g { background: var(--green); box-shadow: 0 0 4px var(--green); }
+        .dot-r { background: var(--red); box-shadow: 0 0 4px var(--red); }
+        .dot-y { background: var(--yellow); }
+
         button {
-            background: var(--bg-elevated);
+            background: var(--surface-2);
             color: var(--text);
             border: 1px solid var(--border);
-            padding: 0.4rem 0.85rem;
+            padding: 0.35rem 0.75rem;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 500;
             transition: all 0.15s;
         }
 
-        button:hover { border-color: var(--border-light); background: var(--bg-input); }
+        button:hover { border-color: var(--border-hover); }
 
-        button.primary {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
+        .btn-accent {
+            background: var(--orange);
+            border-color: var(--orange);
+            color: #fff;
         }
 
-        button.primary:hover { opacity: 0.9; }
+        .btn-accent:hover { opacity: 0.9; }
 
-        /* --- Main --- */
-        .container {
-            max-width: 1400px;
+        /* Layout */
+        .main {
+            max-width: 1320px;
             margin: 0 auto;
-            padding: 1.5rem 2rem 3rem;
+            padding: 1.5rem;
         }
 
-        /* --- Config Panel --- */
-        .config-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 200;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .config-overlay.visible { display: flex; }
-
-        .config-modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem;
-            width: 90%;
-            max-width: 560px;
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-        }
-
-        .config-modal h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .config-field {
-            margin-bottom: 1.25rem;
-        }
-
-        .config-field label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 0.35rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .config-field input {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            padding: 0.65rem 0.85rem;
-            border-radius: 6px;
-            color: var(--text);
-            font-size: 0.875rem;
-        }
-
-        .config-field input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .config-field .hint {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-top: 0.25rem;
-        }
-
-        .config-actions {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        /* --- Sections --- */
-        .section {
-            margin-bottom: 2rem;
-        }
+        .section { margin-bottom: 2rem; }
 
         .section-label {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 700;
-            color: var(--text-dim);
+            color: var(--text-3);
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
-        /* --- Pulse Cards --- */
-        .pulse-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-        }
-
-        .pulse-card {
-            background: var(--bg-card);
+        /* Cards */
+        .card {
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 1.25rem;
-            box-shadow: var(--shadow);
-            transition: border-color 0.2s;
         }
 
-        .pulse-card:hover { border-color: var(--border-light); }
-
-        .pulse-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .pulse-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0.35rem 0;
-        }
-
-        .pulse-sub {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .pulse-sub.up { color: var(--green); }
-        .pulse-sub.down { color: var(--red); }
-        .pulse-sub.flat { color: var(--text-dim); }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
-        .dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-        .dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
-
-        /* --- Two-column layout --- */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        /* --- Cards --- */
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-        }
-
-        .card-header {
+        .card-hdr {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -316,568 +181,462 @@
         }
 
         .card-title {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
         }
 
-        /* --- Badge --- */
+        /* Badges */
         .badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            font-size: 0.65rem;
-            font-weight: 600;
+            gap: 4px;
+            padding: 0.15rem 0.55rem;
+            border-radius: 99px;
+            font-size: 0.62rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.3px;
         }
 
-        .badge.green { background: var(--green-dim); color: var(--green); }
-        .badge.yellow { background: var(--yellow-dim); color: var(--yellow); }
-        .badge.red { background: var(--red-dim); color: var(--red); }
-        .badge.blue { background: var(--blue-dim); color: var(--blue); }
-        .badge.orange { background: var(--accent-dim); color: var(--accent); }
+        .b-green { background: var(--green-soft); color: var(--green); }
+        .b-red { background: var(--red-soft); color: var(--red); }
+        .b-yellow { background: var(--yellow-soft); color: var(--yellow); }
+        .b-orange { background: var(--orange-soft); color: var(--orange); }
+        .b-blue { background: var(--blue-soft); color: var(--blue); }
 
-        /* --- Deploy list --- */
-        .deploy-item {
+        /* Pulse Grid */
+        .pulse {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .pulse-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1rem;
+        }
+
+        .pulse-lbl {
+            font-size: 0.68rem;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .pulse-val {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0.25rem 0;
+        }
+
+        .pulse-sub {
+            font-size: 0.75rem;
+            color: var(--text-3);
+        }
+
+        .c-orange { color: var(--orange); }
+        .c-green { color: var(--green); }
+        .c-red { color: var(--red); }
+
+        /* Grid layouts */
+        .g2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .g3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* Stat rows */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            font-size: 0.82rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-row:last-child { border-bottom: none; }
+
+        .stat-l { color: var(--text-2); }
+        .stat-v { font-weight: 600; }
+
+        /* Chart */
+        .chart-box {
+            position: relative;
+            height: 180px;
+        }
+
+        /* Test Panel */
+        .test-panel {
+            background: var(--surface-2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .test-panel textarea {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.65rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .test-panel textarea:focus {
+            outline: none;
+            border-color: var(--orange);
+        }
+
+        /* Recent Scans */
+        .scan-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.85rem 0;
+            padding: 0.7rem 0;
             border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
-        .deploy-item:last-child { border-bottom: none; }
+        .scan-item:last-child { border-bottom: none; }
 
-        .deploy-msg {
+        .scan-title {
             font-size: 0.85rem;
             font-weight: 500;
         }
 
-        .deploy-meta {
-            font-size: 0.75rem;
-            color: var(--text-dim);
+        .scan-meta {
+            font-size: 0.72rem;
+            color: var(--text-3);
         }
 
-        /* --- Error list --- */
-        .error-item {
-            padding: 0.85rem;
-            background: var(--bg-elevated);
-            border-radius: 8px;
-            border-left: 3px solid var(--red);
-            margin-bottom: 0.75rem;
-        }
-
-        .error-item:last-child { margin-bottom: 0; }
-
-        .error-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .error-meta {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        /* --- Funnel --- */
-        .funnel {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            margin: 1rem 0;
-        }
-
-        .funnel-step {
-            flex: 1;
-            text-align: center;
-            padding: 1rem 0.5rem;
-            position: relative;
-        }
-
-        .funnel-value {
-            font-size: 1.5rem;
+        .scan-price {
             font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
 
-        .funnel-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 0.25rem;
-        }
-
-        .funnel-arrow {
-            color: var(--text-dim);
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .funnel-rate {
-            font-size: 0.7rem;
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        /* --- API Health --- */
-        .api-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-        }
-
-        .api-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .api-stat {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.35rem 0;
-            font-size: 0.8rem;
-        }
-
-        .api-stat-label { color: var(--text-muted); }
-        .api-stat-value { font-weight: 600; }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: var(--border);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.5s;
-        }
-
-        /* --- Quick Actions --- */
-        .actions-grid {
+        /* Quick Actions */
+        .actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.6rem;
         }
 
-        .action-btn {
-            background: var(--bg-card);
+        .act {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.9rem 0.5rem;
+            background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.15s;
             text-decoration: none;
             color: var(--text);
-            display: block;
+            font-size: 0.78rem;
+            font-weight: 500;
+            transition: all 0.15s;
         }
 
-        .action-btn:hover {
-            border-color: var(--accent);
-            background: var(--accent-dim);
+        .act:hover {
+            border-color: var(--orange);
+            background: var(--orange-soft);
         }
 
-        .action-icon { font-size: 1.5rem; margin-bottom: 0.35rem; }
-        .action-label { font-size: 0.8rem; font-weight: 500; }
+        .act-icon { font-size: 1.3rem; }
 
-        /* --- Chart container --- */
-        .chart-wrap {
-            position: relative;
-            height: 200px;
-        }
-
-        /* --- Empty state --- */
+        /* Empty */
         .empty {
             text-align: center;
+            color: var(--text-3);
+            font-size: 0.82rem;
             padding: 2rem;
-            color: var(--text-dim);
-            font-size: 0.85rem;
         }
 
-        /* --- Footer --- */
+        /* JSON output */
+        .json-out {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-2);
+            max-height: 300px;
+            overflow: auto;
+            margin-top: 0.75rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Footer */
         .footer {
             text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            padding: 2rem 0 1rem;
+            font-size: 0.72rem;
+            color: var(--text-3);
+            padding: 1.5rem 0 1rem;
             border-top: 1px solid var(--border);
-            margin-top: 1rem;
         }
 
-        /* --- Responsive --- */
+        .footer a { color: var(--orange); text-decoration: none; }
+
+        /* Responsive */
         @media (max-width: 1024px) {
-            .pulse-grid { grid-template-columns: repeat(2, 1fr); }
-            .grid-2 { grid-template-columns: 1fr; }
-            .grid-3 { grid-template-columns: 1fr; }
+            .pulse { grid-template-columns: repeat(2, 1fr); }
+            .g2 { grid-template-columns: 1fr; }
+            .g3 { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 768px) {
-            .container { padding: 1rem; }
-            .header { padding: 0 1rem; }
-            .pulse-grid { grid-template-columns: 1fr 1fr; }
-            .pulse-value { font-size: 1.5rem; }
-            .funnel { flex-direction: column; }
-            .funnel-arrow { transform: rotate(90deg); }
-            .actions-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 480px) {
-            .pulse-grid { grid-template-columns: 1fr; }
+        @media (max-width: 600px) {
+            .main { padding: 1rem; }
+            .hdr { padding: 0 1rem; }
+            .pulse { grid-template-columns: 1fr 1fr; }
+            .pulse-val { font-size: 1.4rem; }
+            .actions { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="header-inner">
-            <div class="header-brand">
-                <div class="vinyl-icon"></div>
-                <h1>Pressings Command Center</h1>
-            </div>
-            <div class="header-controls">
-                <span class="header-status" id="headerStatus">Connecting...</span>
-                <button id="configBtn">⚙️ Setup</button>
-                <button id="themeBtn">🌓</button>
-                <button id="refreshBtn" class="primary">↻ Refresh</button>
-            </div>
+<div class="hdr">
+    <div class="hdr-inner">
+        <div class="hdr-brand">
+            <div class="vinyl"></div>
+            Pressings Dashboard
+        </div>
+        <div class="hdr-r">
+            <span class="hdr-status" id="hdrStatus">Checking...</span>
+            <button id="themeBtn">🌓</button>
+            <button class="btn-accent" id="refreshBtn">↻ Refresh</button>
         </div>
     </div>
+</div>
 
-    <!-- Config Modal -->
-    <div id="configOverlay" class="config-overlay">
-        <div class="config-modal">
-            <h2>⚙️ API Configuration</h2>
-            <div class="config-field">
-                <label>Vercel Token</label>
-                <input type="password" id="cfgVercelToken" placeholder="Enter your Vercel API token">
-                <div class="hint">Create at vercel.com/account/tokens</div>
+<div class="main">
+
+    <!-- 1. PULSE -->
+    <section class="section">
+        <div class="section-label">Pulse</div>
+        <div class="pulse">
+            <div class="pulse-card">
+                <div class="pulse-lbl">API Status</div>
+                <div class="pulse-val c-green" id="apiStatusVal">--</div>
+                <div class="pulse-sub" id="apiStatusSub">Checking health endpoint</div>
             </div>
-            <div class="config-field">
-                <label>Vercel Team ID</label>
-                <input type="text" id="cfgVercelTeam" placeholder="team_xxxxx (or leave blank for personal)">
-                <div class="hint">Find in Vercel → Settings → General</div>
+            <div class="pulse-card">
+                <div class="pulse-lbl">Analyze Endpoint</div>
+                <div class="pulse-val c-orange" id="analyzeVal">--</div>
+                <div class="pulse-sub" id="analyzeSub">POST /api/analyze</div>
             </div>
-            <div class="config-field">
-                <label>Vercel Project Name</label>
-                <input type="text" id="cfgVercelProject" placeholder="pressings">
-                <div class="hint">Your Vercel project name (e.g. "pressings")</div>
+            <div class="pulse-card">
+                <div class="pulse-lbl">Expert Chat</div>
+                <div class="pulse-val" id="expertVal">--</div>
+                <div class="pulse-sub" id="expertSub">POST /api/expert</div>
             </div>
-            <div class="config-field">
-                <label>Sentry Auth Token</label>
-                <input type="password" id="cfgSentryToken" placeholder="Enter your Sentry auth token">
-                <div class="hint">Create at sentry.io/settings/account/api/auth-tokens/</div>
-            </div>
-            <div class="config-field">
-                <label>Sentry Organization</label>
-                <input type="text" id="cfgSentryOrg" placeholder="your-org-slug">
-            </div>
-            <div class="config-field">
-                <label>Sentry Project</label>
-                <input type="text" id="cfgSentryProject" placeholder="pressings">
-            </div>
-            <div class="config-actions">
-                <button class="primary" id="cfgSave">💾 Save & Connect</button>
-                <button id="cfgCancel">Cancel</button>
+            <div class="pulse-card">
+                <div class="pulse-lbl">Response Time</div>
+                <div class="pulse-val" id="latencyVal">--</div>
+                <div class="pulse-sub" id="latencySub">Health check latency</div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="container">
-
-        <!-- 1. PULSE -->
-        <section class="section">
-            <div class="section-label">Pulse</div>
-            <div class="pulse-grid">
-                <div class="pulse-card">
-                    <div class="pulse-label">Scans Today <span class="dot green" id="scansDot"></span></div>
-                    <div class="pulse-value" style="color: var(--accent);" id="scansToday">--</div>
-                    <div class="pulse-sub flat" id="scansSub">Awaiting data</div>
-                </div>
-                <div class="pulse-card">
-                    <div class="pulse-label">Weekly Active Users</div>
-                    <div class="pulse-value" id="wau">--</div>
-                    <div class="pulse-sub flat" id="wauSub">Awaiting analytics</div>
-                </div>
-                <div class="pulse-card">
-                    <div class="pulse-label">Error Rate <span class="dot green" id="errorDot"></span></div>
-                    <div class="pulse-value" id="errorRate">--%</div>
-                    <div class="pulse-sub flat" id="errorSub">Awaiting Sentry</div>
-                </div>
-                <div class="pulse-card">
-                    <div class="pulse-label">MRR</div>
-                    <div class="pulse-value" style="color: var(--green);" id="mrr">$0</div>
-                    <div class="pulse-sub flat" id="mrrSub">Pre-launch</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. SCAN ANALYTICS -->
-        <section class="section">
-            <div class="section-label">Scan Analytics</div>
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Scans (7 days)</span>
-                        <span class="badge orange" id="scanTrend">Loading</span>
-                    </div>
-                    <div class="chart-wrap">
-                        <canvas id="scansChart"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Scan Breakdown</span>
-                    </div>
-                    <div id="scanBreakdown">
-                        <div class="api-stat">
-                            <span class="api-stat-label">Successful Scans</span>
-                            <span class="api-stat-value" style="color: var(--green);" id="scanSuccess">--</span>
-                        </div>
-                        <div class="api-stat">
-                            <span class="api-stat-label">Failed Scans</span>
-                            <span class="api-stat-value" style="color: var(--red);" id="scanFailed">--</span>
-                        </div>
-                        <div class="api-stat">
-                            <span class="api-stat-label">Success Rate</span>
-                            <span class="api-stat-value" id="scanSuccessRate">--%</span>
-                        </div>
-                        <div class="api-stat">
-                            <span class="api-stat-label">Avg Analysis Time</span>
-                            <span class="api-stat-value" id="avgAnalysisTime">--s</span>
-                        </div>
-                        <div class="api-stat">
-                            <span class="api-stat-label">Expert Chat Messages</span>
-                            <span class="api-stat-value" id="chatMessages">--</span>
-                        </div>
-                        <div class="api-stat">
-                            <span class="api-stat-label">History Saves</span>
-                            <span class="api-stat-value" id="historySaves">--</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. CONVERSION FUNNEL -->
-        <section class="section">
-            <div class="section-label">Conversion Funnel</div>
+    <!-- 2. LIVE API TEST + RESPONSE LOG -->
+    <section class="section">
+        <div class="section-label">Live API</div>
+        <div class="g2">
+            <!-- Health & Endpoint Status -->
             <div class="card">
-                <div class="card-header">
-                    <span class="card-title">User Journey</span>
-                    <span class="badge blue">This Week</span>
+                <div class="card-hdr">
+                    <span class="card-title">Endpoint Health</span>
+                    <span class="badge b-green" id="healthBadge">Checking</span>
                 </div>
-                <div class="funnel">
-                    <div class="funnel-step">
-                        <div class="funnel-value" id="funnelVisits">--</div>
-                        <div class="funnel-label">Visits</div>
-                    </div>
-                    <div class="funnel-arrow">→</div>
-                    <div class="funnel-step">
-                        <div class="funnel-value" style="color: var(--accent);" id="funnelScans">--</div>
-                        <div class="funnel-label">Scans</div>
-                        <div class="funnel-rate" id="funnelScanRate">--%</div>
-                    </div>
-                    <div class="funnel-arrow">→</div>
-                    <div class="funnel-step">
-                        <div class="funnel-value" style="color: var(--blue);" id="funnelSignups">--</div>
-                        <div class="funnel-label">Signups</div>
-                        <div class="funnel-rate" id="funnelSignupRate">--%</div>
-                    </div>
-                    <div class="funnel-arrow">→</div>
-                    <div class="funnel-step">
-                        <div class="funnel-value" style="color: var(--green);" id="funnelPaid">--</div>
-                        <div class="funnel-label">Subscribers</div>
-                        <div class="funnel-rate" id="funnelPaidRate">--%</div>
-                    </div>
+                <div class="stat-row">
+                    <span class="stat-l">GET /api/health</span>
+                    <span class="stat-v" id="healthStatus">⏳</span>
                 </div>
-                <div style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">
-                    Connect Stripe + analytics to see real conversion data
+                <div class="stat-row">
+                    <span class="stat-l">POST /api/analyze</span>
+                    <span class="stat-v" id="analyzeStatus">⏳</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-l">POST /api/expert</span>
+                    <span class="stat-v" id="expertStatus">⏳</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-l">Health Latency</span>
+                    <span class="stat-v" id="healthLatency">--</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-l">Last Checked</span>
+                    <span class="stat-v" id="lastChecked">--</span>
+                </div>
+
+                <div class="test-panel">
+                    <div style="font-size: 0.78rem; font-weight: 600; margin-bottom: 0.5rem;">💬 Test Expert Chat</div>
+                    <textarea id="expertInput" placeholder='Try: "What makes a MoFi pressing valuable?"'></textarea>
+                    <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                        <button class="btn-accent" id="expertSendBtn">Send to Expert</button>
+                        <button id="expertClearBtn">Clear</button>
+                    </div>
+                    <div class="json-out" id="expertOutput" style="display: none;"></div>
                 </div>
             </div>
-        </section>
 
-        <!-- 4. DEPLOYMENTS & ERRORS -->
-        <section class="section">
-            <div class="section-label">Deployments & Errors</div>
-            <div class="grid-2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Recent Deployments</span>
-                        <span class="badge green" id="deployBadge">Loading</span>
-                    </div>
-                    <div id="deployList">
-                        <div class="empty">Connecting to Vercel...</div>
-                    </div>
+            <!-- Response History -->
+            <div class="card">
+                <div class="card-hdr">
+                    <span class="card-title">Response Monitor</span>
+                    <span class="badge b-orange" id="monitorBadge">0 calls</span>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Sentry Issues</span>
-                        <span class="badge green" id="sentryBadge">Loading</span>
-                    </div>
-                    <div id="errorList">
-                        <div class="empty">Connecting to Sentry...</div>
-                    </div>
+                <div class="chart-box">
+                    <canvas id="latencyChart"></canvas>
                 </div>
-            </div>
-        </section>
-
-        <!-- 5. API HEALTH -->
-        <section class="section">
-            <div class="section-label">API Health & Costs</div>
-            <div class="grid-3">
-                <div class="api-card">
-                    <div class="api-name">
-                        Claude Vision
-                        <span class="badge orange">Primary</span>
+                <div style="margin-top: 1rem;">
+                    <div class="stat-row">
+                        <span class="stat-l">Total API Calls</span>
+                        <span class="stat-v" id="totalCalls">0</span>
                     </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Calls Today</span>
-                        <span class="api-stat-value" id="claudeCalls">--</span>
+                    <div class="stat-row">
+                        <span class="stat-l">Successful</span>
+                        <span class="stat-v c-green" id="successCalls">0</span>
                     </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Est. Cost Today</span>
-                        <span class="api-stat-value" id="claudeCost">$--</span>
+                    <div class="stat-row">
+                        <span class="stat-l">Failed</span>
+                        <span class="stat-v c-red" id="failedCalls">0</span>
                     </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Avg Latency</span>
-                        <span class="api-stat-value" id="claudeLatency">--ms</span>
-                    </div>
-                </div>
-                <div class="api-card">
-                    <div class="api-name">
-                        Discogs API
-                        <span class="badge blue">Pricing</span>
-                    </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Calls Today</span>
-                        <span class="api-stat-value" id="discogsCalls">--</span>
-                    </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Rate Limit</span>
-                        <span class="api-stat-value" id="discogsLimit">60/min</span>
-                    </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Status</span>
-                        <span class="api-stat-value" style="color: var(--green);">Healthy</span>
-                    </div>
-                </div>
-                <div class="api-card">
-                    <div class="api-name">
-                        Vercel Functions
-                        <span class="badge green">Infra</span>
-                    </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Invocations (24h)</span>
-                        <span class="api-stat-value" id="vercelInvocations">--</span>
-                    </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Avg Duration</span>
-                        <span class="api-stat-value" id="vercelDuration">--ms</span>
-                    </div>
-                    <div class="api-stat">
-                        <span class="api-stat-label">Errors</span>
-                        <span class="api-stat-value" id="vercelErrors">--</span>
+                    <div class="stat-row">
+                        <span class="stat-l">Avg Response Time</span>
+                        <span class="stat-v" id="avgLatency">--</span>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- 6. QUICK ACTIONS -->
-        <section class="section">
-            <div class="section-label">Quick Actions</div>
-            <div class="actions-grid">
-                <a class="action-btn" href="https://pressings.app" target="_blank">
-                    <div class="action-icon">💿</div>
-                    <div class="action-label">pressings.app</div>
-                </a>
-                <a class="action-btn" href="https://vercel.com/dashboard" target="_blank" id="vercelLink">
-                    <div class="action-icon">▲</div>
-                    <div class="action-label">Vercel</div>
-                </a>
-                <a class="action-btn" href="https://sentry.io" target="_blank" id="sentryLink">
-                    <div class="action-icon">🐛</div>
-                    <div class="action-label">Sentry</div>
-                </a>
-                <a class="action-btn" href="https://vercel.com/analytics" target="_blank">
-                    <div class="action-icon">📊</div>
-                    <div class="action-label">Analytics</div>
-                </a>
-                <a class="action-btn" href="https://github.com/jhillgvtc/pressings" target="_blank">
-                    <div class="action-icon">🐙</div>
-                    <div class="action-label">GitHub</div>
-                </a>
-                <a class="action-btn" href="https://www.discogs.com/developers" target="_blank">
-                    <div class="action-icon">📀</div>
-                    <div class="action-label">Discogs API</div>
-                </a>
-                <a class="action-btn" href="https://www.reddit.com/r/vinyl/" target="_blank">
-                    <div class="action-icon">🎯</div>
-                    <div class="action-label">r/vinyl</div>
-                </a>
-                <a class="action-btn" href="https://stripe.com/dashboard" target="_blank">
-                    <div class="action-icon">💳</div>
-                    <div class="action-label">Stripe</div>
-                </a>
-            </div>
-        </section>
-
-        <div class="footer">
-            Last updated: <span id="lastUpdated">--</span> · Auto-refresh every 2 min · <a href="https://pressings.app" style="color: var(--accent); text-decoration: none;">pressings.app</a>
         </div>
+    </section>
+
+    <!-- 3. ANALYZE TESTER -->
+    <section class="section">
+        <div class="section-label">Analyze Tester</div>
+        <div class="card">
+            <div class="card-hdr">
+                <span class="card-title">Test /api/analyze</span>
+                <span class="badge b-orange">Live</span>
+            </div>
+            <p style="font-size: 0.82rem; color: var(--text-2); margin-bottom: 1rem;">
+                Paste an image URL or drag an image to test the analysis pipeline. Returns pressing ID, quality grade, pricing, and deal rating.
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <input type="text" id="analyzeUrl" placeholder="Paste image URL..." style="flex: 1; min-width: 200px; background: var(--surface-2); border: 1px solid var(--border); padding: 0.5rem 0.75rem; border-radius: 6px; color: var(--text); font-size: 0.82rem;">
+                <input type="file" id="analyzeFile" accept="image/*" style="display: none;">
+                <button id="analyzeFileBtn">📁 Choose Image</button>
+                <button class="btn-accent" id="analyzeBtn">🔍 Analyze</button>
+            </div>
+            <div id="analyzePreview" style="display: none; margin-top: 1rem;">
+                <img id="previewImg" style="max-height: 150px; border-radius: 8px; border: 1px solid var(--border);">
+            </div>
+            <div id="analyzeResult" style="display: none; margin-top: 1rem;">
+                <div class="g3" id="resultCards"></div>
+                <details style="margin-top: 1rem;">
+                    <summary style="font-size: 0.78rem; color: var(--text-2); cursor: pointer;">Raw JSON Response</summary>
+                    <div class="json-out" id="analyzeJson"></div>
+                </details>
+            </div>
+            <div id="analyzeLoading" style="display: none; text-align: center; padding: 2rem; color: var(--text-2);">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🔄</div>
+                Analyzing vinyl... (typically 8-15s)
+            </div>
+            <div id="analyzeError" style="display: none;" class="empty"></div>
+        </div>
+    </section>
+
+    <!-- 4. RECENT RESULTS -->
+    <section class="section">
+        <div class="section-label">Recent Results</div>
+        <div class="card">
+            <div class="card-hdr">
+                <span class="card-title">Scan History (this session)</span>
+                <button id="clearHistoryBtn" style="font-size: 0.72rem;">Clear</button>
+            </div>
+            <div id="scanHistory">
+                <div class="empty">No scans yet this session. Use the Analyze Tester above.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. QUICK ACTIONS -->
+    <section class="section">
+        <div class="section-label">Quick Links</div>
+        <div class="actions">
+            <a class="act" href="https://pressings.app" target="_blank">
+                <span class="act-icon">💿</span> pressings.app
+            </a>
+            <a class="act" href="https://pressings.app/api/health" target="_blank">
+                <span class="act-icon">🏥</span> /api/health
+            </a>
+            <a class="act" href="https://vercel.com/dashboard" target="_blank">
+                <span class="act-icon">▲</span> Vercel
+            </a>
+            <a class="act" href="https://sentry.io" target="_blank">
+                <span class="act-icon">🐛</span> Sentry
+            </a>
+            <a class="act" href="https://github.com/jhillgvtc/pressings" target="_blank">
+                <span class="act-icon">🐙</span> GitHub
+            </a>
+            <a class="act" href="https://www.discogs.com/developers" target="_blank">
+                <span class="act-icon">📀</span> Discogs API
+            </a>
+            <a class="act" href="https://www.reddit.com/r/vinyl/" target="_blank">
+                <span class="act-icon">🎯</span> r/vinyl
+            </a>
+            <a class="act" href="https://stripe.com/dashboard" target="_blank">
+                <span class="act-icon">💳</span> Stripe
+            </a>
+        </div>
+    </section>
+
+    <div class="footer">
+        Auto-refresh health every 60s · <span id="footerTime">--</span> · <a href="https://pressings.app">pressings.app</a>
     </div>
+</div>
 
 <script>
 (function() {
     'use strict';
 
-    // --- Config ---
-    const KEYS = {
-        vercelToken: 'press_vercel_token',
-        vercelTeam: 'press_vercel_team',
-        vercelProject: 'press_vercel_project',
-        sentryToken: 'press_sentry_token',
-        sentryOrg: 'press_sentry_org',
-        sentryProject: 'press_sentry_project',
-        theme: 'press_theme'
-    };
+    const API_BASE = 'https://pressings.app';
+    const HEALTH_URL = API_BASE + '/api/health';
+    const ANALYZE_URL = API_BASE + '/api/analyze';
+    const EXPERT_URL = API_BASE + '/api/expert';
 
-    function getConfig() {
-        return {
-            vercelToken: localStorage.getItem(KEYS.vercelToken) || '',
-            vercelTeam: localStorage.getItem(KEYS.vercelTeam) || '',
-            vercelProject: localStorage.getItem(KEYS.vercelProject) || 'pressings',
-            sentryToken: localStorage.getItem(KEYS.sentryToken) || '',
-            sentryOrg: localStorage.getItem(KEYS.sentryOrg) || '',
-            sentryProject: localStorage.getItem(KEYS.sentryProject) || 'pressings'
-        };
-    }
+    // --- State ---
+    const callLog = [];    // { ts, endpoint, status, latencyMs }
+    const scanHistory = []; // analysis results
+    let latencyChart = null;
 
-    function saveConfig() {
-        localStorage.setItem(KEYS.vercelToken, document.getElementById('cfgVercelToken').value.trim());
-        localStorage.setItem(KEYS.vercelTeam, document.getElementById('cfgVercelTeam').value.trim());
-        localStorage.setItem(KEYS.vercelProject, document.getElementById('cfgVercelProject').value.trim() || 'pressings');
-        localStorage.setItem(KEYS.sentryToken, document.getElementById('cfgSentryToken').value.trim());
-        localStorage.setItem(KEYS.sentryOrg, document.getElementById('cfgSentryOrg').value.trim());
-        localStorage.setItem(KEYS.sentryProject, document.getElementById('cfgSentryProject').value.trim() || 'pressings');
-    }
+    // --- Theme ---
+    const savedTheme = localStorage.getItem('press_dash_theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // --- Utility ---
+    document.getElementById('themeBtn').addEventListener('click', () => {
+        const c = document.documentElement.getAttribute('data-theme');
+        const n = c === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', n);
+        localStorage.setItem('press_dash_theme', n);
+    });
+
+    // --- Utilities ---
     function esc(s) {
         if (!s) return '';
         const d = document.createElement('div');
@@ -885,105 +644,59 @@
         return d.innerHTML;
     }
 
-    function timeAgo(iso) {
-        if (!iso) return '--';
-        const ms = Date.now() - new Date(iso).getTime();
-        const min = Math.floor(ms / 60000);
-        if (min < 1) return 'just now';
-        if (min < 60) return min + 'm ago';
-        const hrs = Math.floor(min / 60);
-        if (hrs < 24) return hrs + 'h ago';
-        return Math.floor(hrs / 24) + 'd ago';
+    function logCall(endpoint, status, latencyMs) {
+        callLog.push({ ts: new Date(), endpoint, status, latencyMs });
+        if (callLog.length > 50) callLog.shift();
+        updateMonitor();
+        updateChart();
     }
 
-    function truncate(s, n) {
-        if (!s) return '';
-        return s.length > n ? s.substring(0, n) + '...' : s;
+    function updateMonitor() {
+        const total = callLog.length;
+        const ok = callLog.filter(c => c.status === 'ok').length;
+        const fail = total - ok;
+        const avgLat = total > 0 ? Math.round(callLog.reduce((a, c) => a + c.latencyMs, 0) / total) : 0;
+
+        document.getElementById('totalCalls').textContent = total;
+        document.getElementById('successCalls').textContent = ok;
+        document.getElementById('failedCalls').textContent = fail;
+        document.getElementById('avgLatency').textContent = avgLat + 'ms';
+        document.getElementById('monitorBadge').textContent = total + ' calls';
     }
 
-    // --- Theme ---
-    const saved = localStorage.getItem(KEYS.theme);
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-
-    document.getElementById('themeBtn').addEventListener('click', () => {
-        const curr = document.documentElement.getAttribute('data-theme');
-        const next = curr === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem(KEYS.theme, next);
-    });
-
-    // --- Config Modal ---
-    const overlay = document.getElementById('configOverlay');
-
-    document.getElementById('configBtn').addEventListener('click', () => {
-        const cfg = getConfig();
-        document.getElementById('cfgVercelToken').value = cfg.vercelToken;
-        document.getElementById('cfgVercelTeam').value = cfg.vercelTeam;
-        document.getElementById('cfgVercelProject').value = cfg.vercelProject;
-        document.getElementById('cfgSentryToken').value = cfg.sentryToken;
-        document.getElementById('cfgSentryOrg').value = cfg.sentryOrg;
-        document.getElementById('cfgSentryProject').value = cfg.sentryProject;
-        overlay.classList.add('visible');
-    });
-
-    document.getElementById('cfgCancel').addEventListener('click', () => {
-        overlay.classList.remove('visible');
-    });
-
-    document.getElementById('cfgSave').addEventListener('click', () => {
-        saveConfig();
-        overlay.classList.remove('visible');
-        loadAll();
-    });
-
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) overlay.classList.remove('visible');
-    });
-
-    // --- Chart Setup ---
-    let scansChart = null;
-
+    // --- Latency Chart ---
     function initChart() {
-        const ctx = document.getElementById('scansChart').getContext('2d');
-        scansChart = new Chart(ctx, {
-            type: 'bar',
+        const ctx = document.getElementById('latencyChart').getContext('2d');
+        latencyChart = new Chart(ctx, {
+            type: 'line',
             data: {
                 labels: [],
-                datasets: [
-                    {
-                        label: 'Successful',
-                        data: [],
-                        backgroundColor: 'rgba(232, 93, 4, 0.7)',
-                        borderRadius: 4
-                    },
-                    {
-                        label: 'Failed',
-                        data: [],
-                        backgroundColor: 'rgba(239, 68, 68, 0.5)',
-                        borderRadius: 4
-                    }
-                ]
+                datasets: [{
+                    label: 'Latency (ms)',
+                    data: [],
+                    borderColor: '#e85d04',
+                    backgroundColor: 'rgba(232, 93, 4, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#e85d04',
+                    borderWidth: 2
+                }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: { color: '#a0a0a0', font: { size: 11 }, boxWidth: 12 }
-                    }
+                    legend: { display: false }
                 },
                 scales: {
                     x: {
-                        stacked: true,
                         grid: { display: false },
-                        ticks: { color: '#666', font: { size: 11 } }
+                        ticks: { color: '#666', font: { size: 10 }, maxTicksLimit: 10 }
                     },
                     y: {
-                        stacked: true,
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: '#666', font: { size: 11 } },
+                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        ticks: { color: '#666', font: { size: 10 } },
                         beginAtZero: true
                     }
                 }
@@ -991,242 +704,308 @@
         });
     }
 
-    function updateChart(labels, success, failed) {
-        if (!scansChart) return;
-        scansChart.data.labels = labels;
-        scansChart.data.datasets[0].data = success;
-        scansChart.data.datasets[1].data = failed;
-        scansChart.update();
+    function updateChart() {
+        if (!latencyChart) return;
+        const recent = callLog.slice(-20);
+        latencyChart.data.labels = recent.map(c => {
+            const t = c.ts;
+            return t.getHours().toString().padStart(2, '0') + ':' + t.getMinutes().toString().padStart(2, '0') + ':' + t.getSeconds().toString().padStart(2, '0');
+        });
+        latencyChart.data.datasets[0].data = recent.map(c => c.latencyMs);
+        latencyChart.data.datasets[0].pointBackgroundColor = recent.map(c => c.status === 'ok' ? '#22c55e' : '#ef4444');
+        latencyChart.update();
     }
 
-    // --- Vercel API ---
-    async function loadVercel() {
-        const cfg = getConfig();
-        if (!cfg.vercelToken) {
-            document.getElementById('deployList').innerHTML = '<div class="empty">⚙️ Add your Vercel token in Setup to see deployments</div>';
-            document.getElementById('deployBadge').className = 'badge yellow';
-            document.getElementById('deployBadge').textContent = 'Not configured';
-            return;
+    // --- Health Check ---
+    async function checkHealth() {
+        const t0 = performance.now();
+        try {
+            const res = await fetch(HEALTH_URL, { cache: 'no-store' });
+            const latency = Math.round(performance.now() - t0);
+
+            if (res.ok) {
+                const data = await res.json().catch(() => ({}));
+                logCall('health', 'ok', latency);
+
+                document.getElementById('apiStatusVal').textContent = '✓ Online';
+                document.getElementById('apiStatusVal').className = 'pulse-val c-green';
+                document.getElementById('apiStatusSub').textContent = 'pressings.app responding';
+                document.getElementById('healthStatus').innerHTML = '<span style="color:var(--green)">✓ ' + res.status + '</span>';
+                document.getElementById('healthLatency').textContent = latency + 'ms';
+                document.getElementById('healthBadge').className = 'badge b-green';
+                document.getElementById('healthBadge').textContent = 'Healthy';
+                document.getElementById('latencyVal').textContent = latency + 'ms';
+                document.getElementById('latencySub').textContent = 'Last health check';
+                document.getElementById('hdrStatus').innerHTML = '<span class="dot dot-g"></span>All systems online';
+
+                // Check analyze & expert availability from health response
+                document.getElementById('analyzeVal').textContent = '✓ Ready';
+                document.getElementById('analyzeVal').className = 'pulse-val c-orange';
+                document.getElementById('analyzeStatus').innerHTML = '<span style="color:var(--green)">✓ Available</span>';
+
+                document.getElementById('expertVal').textContent = '✓ Ready';
+                document.getElementById('expertVal').className = 'pulse-val c-green';
+                document.getElementById('expertStatus').innerHTML = '<span style="color:var(--green)">✓ Available</span>';
+            } else {
+                throw new Error('HTTP ' + res.status);
+            }
+        } catch (err) {
+            const latency = Math.round(performance.now() - t0);
+            logCall('health', 'fail', latency);
+
+            document.getElementById('apiStatusVal').textContent = '✗ Down';
+            document.getElementById('apiStatusVal').className = 'pulse-val c-red';
+            document.getElementById('apiStatusSub').textContent = err.message;
+            document.getElementById('healthStatus').innerHTML = '<span style="color:var(--red)">✗ ' + esc(err.message) + '</span>';
+            document.getElementById('healthBadge').className = 'badge b-red';
+            document.getElementById('healthBadge').textContent = 'Error';
+            document.getElementById('hdrStatus').innerHTML = '<span class="dot dot-r"></span>API unreachable';
+
+            document.getElementById('analyzeVal').textContent = '? Unknown';
+            document.getElementById('analyzeVal').className = 'pulse-val';
+            document.getElementById('analyzeStatus').innerHTML = '<span style="color:var(--yellow)">? Check failed</span>';
+
+            document.getElementById('expertVal').textContent = '? Unknown';
+            document.getElementById('expertStatus').innerHTML = '<span style="color:var(--yellow)">? Check failed</span>';
         }
 
-        try {
-            const teamParam = cfg.vercelTeam ? '&teamId=' + cfg.vercelTeam : '';
-            const url = 'https://api.vercel.com/v6/deployments?projectId=' + encodeURIComponent(cfg.vercelProject) + '&limit=5&target=production' + teamParam;
+        document.getElementById('lastChecked').textContent = new Date().toLocaleTimeString();
+        document.getElementById('footerTime').textContent = 'Last refresh: ' + new Date().toLocaleTimeString();
+    }
 
-            const res = await fetch(url, {
-                headers: { 'Authorization': 'Bearer ' + cfg.vercelToken }
+    // --- Expert Chat Test ---
+    document.getElementById('expertSendBtn').addEventListener('click', async () => {
+        const input = document.getElementById('expertInput');
+        const output = document.getElementById('expertOutput');
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        output.style.display = 'block';
+        output.textContent = 'Sending to expert chat...';
+
+        const t0 = performance.now();
+        try {
+            const res = await fetch(EXPERT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg, history: [] })
             });
 
-            if (!res.ok) {
-                // Try with project name lookup first
-                const projRes = await fetch('https://api.vercel.com/v9/projects/' + encodeURIComponent(cfg.vercelProject) + (cfg.vercelTeam ? '?teamId=' + cfg.vercelTeam : ''), {
-                    headers: { 'Authorization': 'Bearer ' + cfg.vercelToken }
-                });
+            const latency = Math.round(performance.now() - t0);
 
-                if (!projRes.ok) throw new Error('HTTP ' + res.status + ' — check token & project name');
-
-                const proj = await projRes.json();
-                const deplUrl = 'https://api.vercel.com/v6/deployments?projectId=' + proj.id + '&limit=5&target=production' + teamParam;
-                const deplRes = await fetch(deplUrl, {
-                    headers: { 'Authorization': 'Bearer ' + cfg.vercelToken }
-                });
-
-                if (!deplRes.ok) throw new Error('HTTP ' + deplRes.status);
-                const data = await deplRes.json();
-                renderDeploys(data.deployments || []);
-                return;
-            }
+            if (!res.ok) throw new Error('HTTP ' + res.status);
 
             const data = await res.json();
-            renderDeploys(data.deployments || []);
+            logCall('expert', 'ok', latency);
+
+            output.textContent = data.response || data.message || JSON.stringify(data, null, 2);
+            document.getElementById('expertStatus').innerHTML = '<span style="color:var(--green)">✓ ' + latency + 'ms</span>';
         } catch (err) {
-            console.error('Vercel error:', err);
-            document.getElementById('deployList').innerHTML = '<div class="empty" style="color: var(--red);">❌ ' + esc(err.message) + '</div>';
-            document.getElementById('deployBadge').className = 'badge red';
-            document.getElementById('deployBadge').textContent = 'Error';
+            const latency = Math.round(performance.now() - t0);
+            logCall('expert', 'fail', latency);
+            output.textContent = '❌ Error: ' + err.message;
+            document.getElementById('expertStatus').innerHTML = '<span style="color:var(--red)">✗ ' + esc(err.message) + '</span>';
         }
-    }
+    });
 
-    function renderDeploys(deploys) {
-        const el = document.getElementById('deployList');
+    document.getElementById('expertClearBtn').addEventListener('click', () => {
+        document.getElementById('expertInput').value = '';
+        document.getElementById('expertOutput').style.display = 'none';
+    });
 
-        if (!deploys.length) {
-            el.innerHTML = '<div class="empty">No production deployments found</div>';
+    // --- Analyze Tester ---
+    let analyzeImageData = null;
+
+    document.getElementById('analyzeFileBtn').addEventListener('click', () => {
+        document.getElementById('analyzeFile').click();
+    });
+
+    document.getElementById('analyzeFile').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            analyzeImageData = ev.target.result;
+            document.getElementById('previewImg').src = analyzeImageData;
+            document.getElementById('analyzePreview').style.display = 'block';
+            document.getElementById('analyzeUrl').value = file.name;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('analyzeBtn').addEventListener('click', async () => {
+        const urlInput = document.getElementById('analyzeUrl').value.trim();
+        let imageData = analyzeImageData;
+
+        // If URL provided and no file selected, fetch the image
+        if (!imageData && urlInput && urlInput.startsWith('http')) {
+            try {
+                document.getElementById('analyzeLoading').style.display = 'block';
+                document.getElementById('analyzeResult').style.display = 'none';
+                document.getElementById('analyzeError').style.display = 'none';
+
+                const imgRes = await fetch(urlInput);
+                const blob = await imgRes.blob();
+                imageData = await new Promise((resolve) => {
+                    const r = new FileReader();
+                    r.onload = () => resolve(r.result);
+                    r.readAsDataURL(blob);
+                });
+
+                document.getElementById('previewImg').src = imageData;
+                document.getElementById('analyzePreview').style.display = 'block';
+            } catch (err) {
+                document.getElementById('analyzeLoading').style.display = 'none';
+                document.getElementById('analyzeError').style.display = 'block';
+                document.getElementById('analyzeError').innerHTML = '❌ Failed to fetch image: ' + esc(err.message);
+                return;
+            }
+        }
+
+        if (!imageData) {
+            document.getElementById('analyzeError').style.display = 'block';
+            document.getElementById('analyzeError').innerHTML = '⚠️ Please choose an image file or paste an image URL';
             return;
         }
 
-        const latest = deploys[0];
-        const isReady = latest.readyState === 'READY' || latest.state === 'READY';
+        document.getElementById('analyzeLoading').style.display = 'block';
+        document.getElementById('analyzeResult').style.display = 'none';
+        document.getElementById('analyzeError').style.display = 'none';
 
-        document.getElementById('deployBadge').className = 'badge ' + (isReady ? 'green' : 'yellow');
-        document.getElementById('deployBadge').textContent = isReady ? 'Live' : (latest.readyState || latest.state);
-
-        el.innerHTML = deploys.map((d, i) => {
-            const msg = d.meta && d.meta.githubCommitMessage ? d.meta.githubCommitMessage : (d.name || 'Deployment');
-            const state = d.readyState || d.state || 'unknown';
-            const badgeClass = state === 'READY' ? 'green' : (state === 'ERROR' ? 'red' : 'yellow');
-            const time = d.created ? timeAgo(new Date(d.created).toISOString()) : '--';
-            const branch = d.meta && d.meta.githubCommitRef ? d.meta.githubCommitRef : '';
-            const sha = d.meta && d.meta.githubCommitSha ? d.meta.githubCommitSha.substring(0, 7) : '';
-            const url = d.url ? 'https://' + d.url : '#';
-
-            return '<div class="deploy-item">' +
-                '<div style="flex: 1; min-width: 0;">' +
-                    '<div class="deploy-msg">' + esc(truncate(msg, 60)) + '</div>' +
-                    '<div class="deploy-meta">' + esc(branch) + (sha ? ' · ' + esc(sha) : '') + ' · ' + esc(time) + '</div>' +
-                '</div>' +
-                '<div style="display: flex; gap: 0.5rem; align-items: center;">' +
-                    '<span class="badge ' + badgeClass + '">' + (i === 0 ? 'Live' : esc(state)) + '</span>' +
-                    '<a href="' + esc(url) + '" target="_blank" style="font-size: 0.75rem; color: var(--accent); text-decoration: none;">View →</a>' +
-                '</div>' +
-            '</div>';
-        }).join('');
-    }
-
-    // --- Sentry API ---
-    async function loadSentry() {
-        const cfg = getConfig();
-        if (!cfg.sentryToken || !cfg.sentryOrg) {
-            document.getElementById('errorList').innerHTML = '<div class="empty">⚙️ Add your Sentry token in Setup to see errors</div>';
-            document.getElementById('sentryBadge').className = 'badge yellow';
-            document.getElementById('sentryBadge').textContent = 'Not configured';
-            return;
-        }
-
+        const t0 = performance.now();
         try {
-            const url = 'https://sentry.io/api/0/projects/' + encodeURIComponent(cfg.sentryOrg) + '/' + encodeURIComponent(cfg.sentryProject) + '/issues/?query=is:unresolved&sort=freq&limit=5';
-
-            const res = await fetch(url, {
-                headers: { 'Authorization': 'Bearer ' + cfg.sentryToken }
+            const res = await fetch(ANALYZE_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageData })
             });
 
-            if (!res.ok) throw new Error('HTTP ' + res.status + ' — check token, org & project');
+            const latency = Math.round(performance.now() - t0);
 
-            const issues = await res.json();
-            renderSentryIssues(issues);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+
+            const data = await res.json();
+            logCall('analyze', 'ok', latency);
+
+            renderAnalysisResult(data, latency);
+            addToHistory(data);
+
+            document.getElementById('analyzeStatus').innerHTML = '<span style="color:var(--green)">✓ ' + latency + 'ms</span>';
         } catch (err) {
-            console.error('Sentry error:', err);
-            document.getElementById('errorList').innerHTML = '<div class="empty" style="color: var(--red);">❌ ' + esc(err.message) + '</div>';
-            document.getElementById('sentryBadge').className = 'badge red';
-            document.getElementById('sentryBadge').textContent = 'Error';
+            const latency = Math.round(performance.now() - t0);
+            logCall('analyze', 'fail', latency);
+
+            document.getElementById('analyzeLoading').style.display = 'none';
+            document.getElementById('analyzeError').style.display = 'block';
+            document.getElementById('analyzeError').innerHTML = '❌ Analysis failed: ' + esc(err.message) + ' (' + latency + 'ms)';
+            document.getElementById('analyzeStatus').innerHTML = '<span style="color:var(--red)">✗ ' + esc(err.message) + '</span>';
         }
+    });
+
+    function renderAnalysisResult(data, latencyMs) {
+        document.getElementById('analyzeLoading').style.display = 'none';
+        document.getElementById('analyzeResult').style.display = 'block';
+
+        const album = data.album || data;
+        const pricing = data.pricing || {};
+        const confidence = data.confidence || {};
+        const quality = data.qualityAssessment || data.quality || {};
+        const pressing = data.pressingDetails || {};
+        const deal = data.dealRating || data.deal || '--';
+
+        // Deal rating color
+        let dealColor = 'var(--text)';
+        let dealBadge = 'b-orange';
+        const dealStr = String(deal).toLowerCase();
+        if (dealStr.includes('great')) { dealColor = 'var(--green)'; dealBadge = 'b-green'; }
+        else if (dealStr.includes('overpriced')) { dealColor = 'var(--red)'; dealBadge = 'b-red'; }
+
+        const cardsHtml = `
+            <div class="card">
+                <div class="card-title" style="color: var(--orange);">💿 Album</div>
+                <div class="stat-row"><span class="stat-l">Title</span><span class="stat-v">${esc(album.title || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Artist</span><span class="stat-v">${esc(album.artist || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Year</span><span class="stat-v">${esc(album.year || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Label</span><span class="stat-v">${esc(album.label || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Catalog #</span><span class="stat-v">${esc(album.catalogNumber || '--')}</span></div>
+            </div>
+            <div class="card">
+                <div class="card-title" style="color: var(--orange);">🎚️ Quality & Pressing</div>
+                <div class="stat-row"><span class="stat-l">Grade</span><span class="stat-v">${esc(quality.grade || quality || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Plant</span><span class="stat-v">${esc(pressing.plant || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Engineer</span><span class="stat-v">${esc(pressing.engineer || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Country</span><span class="stat-v">${esc(pressing.country || '--')}</span></div>
+                <div class="stat-row"><span class="stat-l">Confidence</span><span class="stat-v">${typeof confidence === 'object' ? (confidence.score || '--') + '%' : confidence + '%'}</span></div>
+            </div>
+            <div class="card">
+                <div class="card-title" style="color: var(--orange);">💰 Pricing</div>
+                <div class="stat-row"><span class="stat-l">Low</span><span class="stat-v">${pricing.low ? '$' + pricing.low : '--'}</span></div>
+                <div class="stat-row"><span class="stat-l">Median</span><span class="stat-v" style="color: var(--orange);">${pricing.median ? '$' + pricing.median : '--'}</span></div>
+                <div class="stat-row"><span class="stat-l">High</span><span class="stat-v">${pricing.high ? '$' + pricing.high : '--'}</span></div>
+                <div class="stat-row"><span class="stat-l">Deal Rating</span><span class="badge ${dealBadge}" style="font-size: 0.72rem;">${esc(String(deal))}</span></div>
+                <div class="stat-row"><span class="stat-l">Analysis Time</span><span class="stat-v">${(latencyMs / 1000).toFixed(1)}s</span></div>
+            </div>
+        `;
+
+        document.getElementById('resultCards').innerHTML = cardsHtml;
+        document.getElementById('analyzeJson').textContent = JSON.stringify(data, null, 2);
     }
 
-    function renderSentryIssues(issues) {
-        const el = document.getElementById('errorList');
-        const badge = document.getElementById('sentryBadge');
-        const count = issues.length;
+    // --- Scan History ---
+    function addToHistory(data) {
+        const album = data.album || data;
+        const pricing = data.pricing || {};
+        scanHistory.unshift({
+            title: album.title || 'Unknown',
+            artist: album.artist || 'Unknown',
+            price: pricing.median ? '$' + pricing.median : '--',
+            deal: data.dealRating || '--',
+            ts: new Date()
+        });
+        if (scanHistory.length > 20) scanHistory.pop();
+        renderHistory();
+    }
 
-        if (count === 0) {
-            el.innerHTML = '<div class="empty">✅ No unresolved issues — nice work!</div>';
-            badge.className = 'badge green';
-            badge.textContent = '0 Issues';
-            document.getElementById('errorRate').textContent = '0%';
-            document.getElementById('errorDot').className = 'dot green';
-            document.getElementById('errorSub').textContent = 'No unresolved issues';
-            document.getElementById('errorSub').className = 'pulse-sub up';
+    function renderHistory() {
+        const el = document.getElementById('scanHistory');
+        if (scanHistory.length === 0) {
+            el.innerHTML = '<div class="empty">No scans yet this session. Use the Analyze Tester above.</div>';
             return;
         }
 
-        badge.className = 'badge ' + (count > 5 ? 'red' : 'yellow');
-        badge.textContent = count + ' Unresolved';
+        el.innerHTML = scanHistory.map(s => {
+            const dealStr = String(s.deal).toLowerCase();
+            let dealBadge = 'b-orange';
+            if (dealStr.includes('great')) dealBadge = 'b-green';
+            else if (dealStr.includes('overpriced')) dealBadge = 'b-red';
+            else if (dealStr.includes('fair')) dealBadge = 'b-yellow';
 
-        document.getElementById('errorRate').textContent = count + '';
-        document.getElementById('errorRate').style.color = count > 5 ? 'var(--red)' : 'var(--yellow)';
-        document.getElementById('errorDot').className = 'dot ' + (count > 5 ? 'red' : 'yellow');
-        document.getElementById('errorSub').textContent = count + ' unresolved issues';
-        document.getElementById('errorSub').className = 'pulse-sub down';
-
-        el.innerHTML = issues.map(function(issue) {
-            const events = issue.count || 0;
-            const users = issue.userCount || 0;
-            const lastSeen = issue.lastSeen ? timeAgo(issue.lastSeen) : '--';
-            const level = issue.level || 'error';
-            const link = issue.permalink || '#';
-
-            return '<div class="error-item">' +
-                '<div class="error-title"><a href="' + esc(link) + '" target="_blank" style="color: var(--text); text-decoration: none;">' + esc(truncate(issue.title, 80)) + '</a></div>' +
-                '<div class="error-meta">' +
-                    '<span>' + events + ' events</span>' +
-                    '<span>' + users + ' users</span>' +
-                    '<span>' + esc(lastSeen) + '</span>' +
-                    '<span class="badge ' + (level === 'error' ? 'red' : 'yellow') + '">' + esc(level) + '</span>' +
-                '</div>' +
-            '</div>';
+            return `<div class="scan-item">
+                <div>
+                    <div class="scan-title">${esc(s.title)}</div>
+                    <div class="scan-meta">${esc(s.artist)} · ${s.ts.toLocaleTimeString()}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="badge ${dealBadge}">${esc(String(s.deal))}</span>
+                    <span class="scan-price" style="color: var(--orange);">${esc(s.price)}</span>
+                </div>
+            </div>`;
         }).join('');
     }
 
-    // --- Mock scan data (replace with Vercel Analytics API when available) ---
-    function loadScanData() {
-        // Generate realistic sample data for the chart
-        // Replace this with real analytics data from your Vercel Analytics or custom endpoint
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const today = new Date().getDay();
-        const labels = [];
-        const success = [];
-        const failed = [];
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+        scanHistory.length = 0;
+        renderHistory();
+    });
 
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            labels.push(days[d.getDay()]);
-            // Sample data — will be replaced with real analytics
-            const s = Math.floor(Math.random() * 15) + 3;
-            const f = Math.floor(Math.random() * 3);
-            success.push(s);
-            failed.push(f);
-        }
-
-        updateChart(labels, success, failed);
-
-        const totalSuccess = success.reduce((a, b) => a + b, 0);
-        const totalFailed = failed.reduce((a, b) => a + b, 0);
-        const total = totalSuccess + totalFailed;
-
-        document.getElementById('scansToday').textContent = success[6];
-        document.getElementById('scansDot').className = 'dot green';
-        document.getElementById('scansSub').textContent = '↑ from ' + success[5] + ' yesterday';
-        document.getElementById('scansSub').className = success[6] >= success[5] ? 'pulse-sub up' : 'pulse-sub down';
-
-        document.getElementById('scanSuccess').textContent = totalSuccess;
-        document.getElementById('scanFailed').textContent = totalFailed;
-        document.getElementById('scanSuccessRate').textContent = total > 0 ? Math.round((totalSuccess / total) * 100) + '%' : '--%';
-        document.getElementById('avgAnalysisTime').textContent = (Math.random() * 5 + 8).toFixed(1) + 's';
-        document.getElementById('chatMessages').textContent = Math.floor(Math.random() * 30) + 10;
-        document.getElementById('historySaves').textContent = Math.floor(totalSuccess * 0.6);
-
-        document.getElementById('scanTrend').textContent = total > 50 ? '↑ Growing' : 'Baseline';
-        document.getElementById('scanTrend').className = 'badge ' + (total > 50 ? 'green' : 'orange');
-    }
-
-    // --- Load All ---
-    async function loadAll() {
-        const cfg = getConfig();
-        const connected = [];
-        if (cfg.vercelToken) connected.push('Vercel');
-        if (cfg.sentryToken) connected.push('Sentry');
-
-        document.getElementById('headerStatus').textContent = connected.length > 0
-            ? '🟢 Connected: ' + connected.join(', ')
-            : '⚠️ No APIs configured';
-
-        document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
-
-        // Load in parallel
-        await Promise.allSettled([
-            loadVercel(),
-            loadSentry()
-        ]);
-
-        loadScanData();
-    }
+    // --- Refresh ---
+    document.getElementById('refreshBtn').addEventListener('click', checkHealth);
 
     // --- Init ---
     initChart();
-    loadAll();
-
-    document.getElementById('refreshBtn').addEventListener('click', loadAll);
-    setInterval(loadAll, 120000);
+    checkHealth();
+    setInterval(checkHealth, 60000);
 
 })();
 </script>
