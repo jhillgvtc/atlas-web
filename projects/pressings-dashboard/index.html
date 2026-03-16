@@ -3,106 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pressings App Dashboard</title>
+    <title>Pressings Command Center</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128191;</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --bg-tertiary: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --text-tertiary: #606060;
-            --border: #333333;
-            --status-success: #22c55e;
-            --status-warning: #f59e0b;
-            --status-error: #ef4444;
-            --status-info: #3b82f6;
-            --accent: #8b5cf6;
-            --shadow: rgba(0, 0, 0, 0.3);
+            --bg: #121212;
+            --bg-card: #1e1e1e;
+            --bg-elevated: #2a2a2a;
+            --bg-input: #333333;
+            --border: #3a3a3a;
+            --border-light: #4a4a4a;
+            --text: #f0f0f0;
+            --text-muted: #a0a0a0;
+            --text-dim: #666666;
+            --accent: #e85d04;
+            --accent-light: #ff7b2e;
+            --accent-dim: rgba(232, 93, 4, 0.15);
+            --green: #22c55e;
+            --green-dim: rgba(34, 197, 94, 0.12);
+            --yellow: #eab308;
+            --yellow-dim: rgba(234, 179, 8, 0.12);
+            --red: #ef4444;
+            --red-dim: rgba(239, 68, 68, 0.12);
+            --blue: #3b82f6;
+            --blue-dim: rgba(59, 130, 246, 0.12);
+            --purple: #a78bfa;
+            --radius: 12px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         [data-theme="light"] {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f5;
-            --bg-tertiary: #e5e5e5;
-            --text-primary: #0a0a0a;
-            --text-secondary: #606060;
-            --text-tertiary: #a0a0a0;
+            --bg: #f8f8f8;
+            --bg-card: #ffffff;
+            --bg-elevated: #f0f0f0;
+            --bg-input: #e8e8e8;
             --border: #e0e0e0;
-            --shadow: rgba(0, 0, 0, 0.1);
+            --border-light: #d0d0d0;
+            --text: #1a1a1a;
+            --text-muted: #666666;
+            --text-dim: #999999;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: var(--bg);
+            color: var(--text);
             line-height: 1.6;
         }
 
+        /* --- Header --- */
         .header {
-            background: var(--bg-secondary);
+            background: var(--bg-card);
             border-bottom: 1px solid var(--border);
-            padding: 1.5rem 2rem;
+            padding: 0 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
             backdrop-filter: blur(12px);
         }
 
-        .header-content {
+        .header-inner {
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            height: 60px;
         }
 
-        .header-title {
+        .header-brand {
             display: flex;
             align-items: center;
             gap: 0.75rem;
         }
 
-        .header-title h1 {
-            font-size: 1.5rem;
+        .header-brand h1 {
+            font-size: 1.25rem;
             font-weight: 700;
         }
 
-        .header-emoji {
-            font-size: 2rem;
+        .vinyl-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #333, #555, #333, #555, #333);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: spin 4s linear infinite;
         }
+
+        .vinyl-icon::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .header-controls {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             align-items: center;
         }
 
-        button {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s;
+        .header-status {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-right: 1rem;
         }
 
-        button:hover {
-            background: var(--bg-secondary);
-            border-color: var(--text-tertiary);
+        button {
+            background: var(--bg-elevated);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.15s;
         }
+
+        button:hover { border-color: var(--border-light); background: var(--bg-input); }
 
         button.primary {
             background: var(--accent);
@@ -110,748 +140,1095 @@
             color: white;
         }
 
-        button.primary:hover {
-            opacity: 0.9;
-        }
+        button.primary:hover { opacity: 0.9; }
 
-        button.danger {
-            background: var(--status-error);
-            border-color: var(--status-error);
-            color: white;
-        }
-
+        /* --- Main --- */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.5rem 2rem 3rem;
         }
 
-        .alert {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--status-warning);
-            border-radius: 8px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
+        /* --- Config Panel --- */
+        .config-overlay {
             display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 200;
+            justify-content: center;
             align-items: center;
-            gap: 1rem;
         }
 
-        .alert.visible {
-            display: flex;
-        }
+        .config-overlay.visible { display: flex; }
 
-        .alert.error {
-            border-left-color: var(--status-error);
-        }
-
-        .alert.success {
-            border-left-color: var(--status-success);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
+        .config-modal {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: all 0.2s;
+            border-radius: var(--radius);
+            padding: 2rem;
+            width: 90%;
+            max-width: 560px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
         }
 
-        .stat-card:hover {
-            border-color: var(--text-tertiary);
-            box-shadow: 0 4px 12px var(--shadow);
+        .config-modal h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
+        .config-field {
+            margin-bottom: 1.25rem;
         }
 
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+        .config-field label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0.5rem 0;
-        }
-
-        .stat-change {
+        .config-field input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            padding: 0.65rem 0.85rem;
+            border-radius: 6px;
+            color: var(--text);
             font-size: 0.875rem;
-            color: var(--text-secondary);
         }
 
-        .stat-change.positive {
-            color: var(--status-success);
+        .config-field input:focus {
+            outline: none;
+            border-color: var(--accent);
         }
 
-        .stat-change.negative {
-            color: var(--status-error);
+        .config-field .hint {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
         }
 
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
+        .config-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
         }
 
-        .status-indicator.success {
-            background: var(--status-success);
-            box-shadow: 0 0 8px var(--status-success);
-        }
-
-        .status-indicator.warning {
-            background: var(--status-warning);
-            box-shadow: 0 0 8px var(--status-warning);
-        }
-
-        .status-indicator.error {
-            background: var(--status-error);
-            box-shadow: 0 0 8px var(--status-error);
-        }
-
+        /* --- Sections --- */
         .section {
             margin-bottom: 2rem;
         }
 
-        .section-header {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-tertiary);
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border);
         }
 
-        .card {
-            background: var(--bg-secondary);
+        /* --- Pulse Cards --- */
+        .pulse-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .pulse-card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            transition: border-color 0.2s;
+        }
+
+        .pulse-card:hover { border-color: var(--border-light); }
+
+        .pulse-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pulse-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.35rem 0;
+        }
+
+        .pulse-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pulse-sub.up { color: var(--green); }
+        .pulse-sub.down { color: var(--red); }
+        .pulse-sub.flat { color: var(--text-dim); }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+        .dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+        /* --- Two-column layout --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 1rem;
+        }
+
+        /* --- Badge --- */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge.green { background: var(--green-dim); color: var(--green); }
+        .badge.yellow { background: var(--yellow-dim); color: var(--yellow); }
+        .badge.red { background: var(--red-dim); color: var(--red); }
+        .badge.blue { background: var(--blue-dim); color: var(--blue); }
+        .badge.orange { background: var(--accent-dim); color: var(--accent); }
+
+        /* --- Deploy list --- */
+        .deploy-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .deployment-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .deployment-item {
-            background: var(--bg-tertiary);
-            padding: 1rem;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
-        .deployment-info {
-            flex: 1;
-            min-width: 200px;
+        .deploy-item:last-child { border-bottom: none; }
+
+        .deploy-msg {
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        .deployment-commit {
-            font-size: 0.875rem;
+        .deploy-meta {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        /* --- Error list --- */
+        .error-item {
+            padding: 0.85rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            border-left: 3px solid var(--red);
+            margin-bottom: 0.75rem;
+        }
+
+        .error-item:last-child { margin-bottom: 0; }
+
+        .error-title {
+            font-size: 0.85rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
         }
 
-        .deployment-meta {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .deployment-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .badge.success {
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--status-success);
-        }
-
-        .badge.warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--status-warning);
-        }
-
-        .badge.error {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--status-error);
-        }
-
-        .badge.info {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--status-info);
-        }
-
-        .error-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .error-item {
-            background: var(--bg-tertiary);
-            padding: 1rem;
-            border-radius: 6px;
-            border-left: 3px solid var(--status-error);
-        }
-
-        .error-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
         .error-meta {
             font-size: 0.75rem;
-            color: var(--text-secondary);
+            color: var(--text-dim);
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
         }
 
-        .metric-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+        /* --- Funnel --- */
+        .funnel {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin: 1rem 0;
         }
 
-        .metric-item {
-            background: var(--bg-tertiary);
-            padding: 1rem;
-            border-radius: 6px;
+        .funnel-step {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 0.5rem;
+            position: relative;
         }
 
-        .metric-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .metric-value {
+        .funnel-value {
             font-size: 1.5rem;
             font-weight: 700;
         }
 
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .funnel-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
         }
 
-        .action-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+        .funnel-arrow {
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            flex-shrink: 0;
         }
 
-        .action-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        .action-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .action-label {
+        .funnel-rate {
+            font-size: 0.7rem;
+            color: var(--accent);
             font-weight: 600;
         }
 
-        .config-panel {
-            background: var(--bg-tertiary);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+        /* --- API Health --- */
+        .api-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
         }
 
-        .config-panel input {
+        .api-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .api-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.35rem 0;
+            font-size: 0.8rem;
+        }
+
+        .api-stat-label { color: var(--text-muted); }
+        .api-stat-value { font-weight: 600; }
+
+        .progress-bar {
             width: 100%;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            padding: 0.75rem;
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 0.875rem;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
             margin-top: 0.5rem;
         }
 
-        .config-panel label {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.5s;
         }
 
-        .config-grid {
+        /* --- Quick Actions --- */
+        .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            color: var(--text);
+            display: block;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .action-icon { font-size: 1.5rem; margin-bottom: 0.35rem; }
+        .action-label { font-size: 0.8rem; font-weight: 500; }
+
+        /* --- Chart container --- */
+        .chart-wrap {
+            position: relative;
+            height: 200px;
+        }
+
+        /* --- Empty state --- */
+        .empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            padding: 2rem 0 1rem;
+            border-top: 1px solid var(--border);
             margin-top: 1rem;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-        }
-
-        .last-updated {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
+        /* --- Responsive --- */
+        @media (max-width: 1024px) {
+            .pulse-grid { grid-template-columns: repeat(2, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
+            .container { padding: 1rem; }
+            .header { padding: 0 1rem; }
+            .pulse-grid { grid-template-columns: 1fr 1fr; }
+            .pulse-value { font-size: 1.5rem; }
+            .funnel { flex-direction: column; }
+            .funnel-arrow { transform: rotate(90deg); }
+            .actions-grid { grid-template-columns: repeat(2, 1fr); }
+        }
 
-            .header {
-                padding: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .deployment-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .stat-value {
-                font-size: 1.5rem;
-            }
+        @media (max-width: 480px) {
+            .pulse-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Header -->
     <div class="header">
-        <div class="header-content">
-            <div class="header-title">
-                <span class="header-emoji">💿</span>
-                <h1>Pressings Dashboard</h1>
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="vinyl-icon"></div>
+                <h1>Pressings Command Center</h1>
             </div>
             <div class="header-controls">
-                <button id="configBtn">⚙️ Configure APIs</button>
-                <button id="themeToggle">🌓 Theme</button>
-                <button id="refreshBtn" class="primary">🔄 Refresh</button>
+                <span class="header-status" id="headerStatus">Connecting...</span>
+                <button id="configBtn">⚙️ Setup</button>
+                <button id="themeBtn">🌓</button>
+                <button id="refreshBtn" class="primary">↻ Refresh</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config Modal -->
+    <div id="configOverlay" class="config-overlay">
+        <div class="config-modal">
+            <h2>⚙️ API Configuration</h2>
+            <div class="config-field">
+                <label>Vercel Token</label>
+                <input type="password" id="cfgVercelToken" placeholder="Enter your Vercel API token">
+                <div class="hint">Create at vercel.com/account/tokens</div>
+            </div>
+            <div class="config-field">
+                <label>Vercel Team ID</label>
+                <input type="text" id="cfgVercelTeam" placeholder="team_xxxxx (or leave blank for personal)">
+                <div class="hint">Find in Vercel → Settings → General</div>
+            </div>
+            <div class="config-field">
+                <label>Vercel Project Name</label>
+                <input type="text" id="cfgVercelProject" placeholder="pressings">
+                <div class="hint">Your Vercel project name (e.g. "pressings")</div>
+            </div>
+            <div class="config-field">
+                <label>Sentry Auth Token</label>
+                <input type="password" id="cfgSentryToken" placeholder="Enter your Sentry auth token">
+                <div class="hint">Create at sentry.io/settings/account/api/auth-tokens/</div>
+            </div>
+            <div class="config-field">
+                <label>Sentry Organization</label>
+                <input type="text" id="cfgSentryOrg" placeholder="your-org-slug">
+            </div>
+            <div class="config-field">
+                <label>Sentry Project</label>
+                <input type="text" id="cfgSentryProject" placeholder="pressings">
+            </div>
+            <div class="config-actions">
+                <button class="primary" id="cfgSave">💾 Save & Connect</button>
+                <button id="cfgCancel">Cancel</button>
             </div>
         </div>
     </div>
 
     <div class="container">
-        <!-- Alert Banner -->
-        <div id="alertBanner" class="alert">
-            <span id="alertText"></span>
-        </div>
 
-        <!-- Configuration Panel -->
-        <div id="configPanel" class="config-panel" style="display: none;">
-            <h3 style="margin-bottom: 1rem;">API Configuration</h3>
-            <div class="config-grid">
-                <div>
-                    <label>Vercel Token</label>
-                    <input type="password" id="vercelToken" placeholder="Your Vercel API token">
-                </div>
-                <div>
-                    <label>Vercel Project ID</label>
-                    <input type="text" id="vercelProject" placeholder="prj_xxxxx">
-                </div>
-                <div>
-                    <label>Sentry Auth Token</label>
-                    <input type="password" id="sentryToken" placeholder="Your Sentry auth token">
-                </div>
-                <div>
-                    <label>Sentry Project</label>
-                    <input type="text" id="sentryProject" placeholder="org-name/project-name">
-                </div>
-            </div>
-            <div style="margin-top: 1rem; display: flex; gap: 0.75rem;">
-                <button id="saveConfigBtn" class="primary">💾 Save Configuration</button>
-                <button id="cancelConfigBtn">Cancel</button>
-            </div>
-        </div>
-
-        <!-- Stats Overview -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Deployment Status</span>
-                    <span class="status-indicator success" id="deployStatus"></span>
-                </div>
-                <div class="stat-value" id="deployStatusText">Ready</div>
-                <div class="stat-change" id="deployTime">Last deployed 2h ago</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Error Count (24h)</span>
-                    <span class="status-indicator success" id="errorStatus"></span>
-                </div>
-                <div class="stat-value" id="errorCount">0</div>
-                <div class="stat-change positive" id="errorChange">↓ 100% from yesterday</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Uptime (30d)</span>
-                    <span class="status-indicator success"></span>
-                </div>
-                <div class="stat-value" id="uptime">99.9%</div>
-                <div class="stat-change positive">All systems operational</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-label">Active Users</span>
-                </div>
-                <div class="stat-value" id="activeUsers">--</div>
-                <div class="stat-change" id="userChange">Configure analytics</div>
-            </div>
-        </div>
-
-        <!-- Deployments -->
+        <!-- 1. PULSE -->
         <section class="section">
-            <div class="section-header">Recent Deployments</div>
-            <div class="card">
-                <div class="card-title">
-                    <span>Production Builds</span>
-                    <span class="badge success">Connected to Vercel</span>
+            <div class="section-label">Pulse</div>
+            <div class="pulse-grid">
+                <div class="pulse-card">
+                    <div class="pulse-label">Scans Today <span class="dot green" id="scansDot"></span></div>
+                    <div class="pulse-value" style="color: var(--accent);" id="scansToday">--</div>
+                    <div class="pulse-sub flat" id="scansSub">Awaiting data</div>
                 </div>
-                <div id="deploymentList" class="deployment-list">
-                    <div class="deployment-item">
-                        <div class="deployment-info">
-                            <div class="deployment-commit">Fix: Update pricing page layout</div>
-                            <div class="deployment-meta">main • 2 hours ago • 42s build time</div>
-                        </div>
-                        <div class="deployment-actions">
-                            <span class="badge success">Live</span>
-                            <button style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">View</button>
-                        </div>
+                <div class="pulse-card">
+                    <div class="pulse-label">Weekly Active Users</div>
+                    <div class="pulse-value" id="wau">--</div>
+                    <div class="pulse-sub flat" id="wauSub">Awaiting analytics</div>
+                </div>
+                <div class="pulse-card">
+                    <div class="pulse-label">Error Rate <span class="dot green" id="errorDot"></span></div>
+                    <div class="pulse-value" id="errorRate">--%</div>
+                    <div class="pulse-sub flat" id="errorSub">Awaiting Sentry</div>
+                </div>
+                <div class="pulse-card">
+                    <div class="pulse-label">MRR</div>
+                    <div class="pulse-value" style="color: var(--green);" id="mrr">$0</div>
+                    <div class="pulse-sub flat" id="mrrSub">Pre-launch</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SCAN ANALYTICS -->
+        <section class="section">
+            <div class="section-label">Scan Analytics</div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Scans (7 days)</span>
+                        <span class="badge orange" id="scanTrend">Loading</span>
                     </div>
-                    <div class="deployment-item">
-                        <div class="deployment-info">
-                            <div class="deployment-commit">Feature: Add user authentication</div>
-                            <div class="deployment-meta">main • 6 hours ago • 38s build time</div>
+                    <div class="chart-wrap">
+                        <canvas id="scansChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Scan Breakdown</span>
+                    </div>
+                    <div id="scanBreakdown">
+                        <div class="api-stat">
+                            <span class="api-stat-label">Successful Scans</span>
+                            <span class="api-stat-value" style="color: var(--green);" id="scanSuccess">--</span>
                         </div>
-                        <div class="deployment-actions">
-                            <span class="badge info">Previous</span>
-                            <button style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">Rollback</button>
+                        <div class="api-stat">
+                            <span class="api-stat-label">Failed Scans</span>
+                            <span class="api-stat-value" style="color: var(--red);" id="scanFailed">--</span>
+                        </div>
+                        <div class="api-stat">
+                            <span class="api-stat-label">Success Rate</span>
+                            <span class="api-stat-value" id="scanSuccessRate">--%</span>
+                        </div>
+                        <div class="api-stat">
+                            <span class="api-stat-label">Avg Analysis Time</span>
+                            <span class="api-stat-value" id="avgAnalysisTime">--s</span>
+                        </div>
+                        <div class="api-stat">
+                            <span class="api-stat-label">Expert Chat Messages</span>
+                            <span class="api-stat-value" id="chatMessages">--</span>
+                        </div>
+                        <div class="api-stat">
+                            <span class="api-stat-label">History Saves</span>
+                            <span class="api-stat-value" id="historySaves">--</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Error Monitoring -->
+        <!-- 3. CONVERSION FUNNEL -->
         <section class="section">
-            <div class="section-header">Error Monitoring</div>
+            <div class="section-label">Conversion Funnel</div>
             <div class="card">
-                <div class="card-title">
-                    <span>Top Issues (Sentry)</span>
-                    <span class="badge success">0 Unresolved</span>
+                <div class="card-header">
+                    <span class="card-title">User Journey</span>
+                    <span class="badge blue">This Week</span>
                 </div>
-                <div id="errorList" class="error-list">
-                    <div class="empty-state">
-                        ✅ No errors in the last 24 hours
+                <div class="funnel">
+                    <div class="funnel-step">
+                        <div class="funnel-value" id="funnelVisits">--</div>
+                        <div class="funnel-label">Visits</div>
+                    </div>
+                    <div class="funnel-arrow">→</div>
+                    <div class="funnel-step">
+                        <div class="funnel-value" style="color: var(--accent);" id="funnelScans">--</div>
+                        <div class="funnel-label">Scans</div>
+                        <div class="funnel-rate" id="funnelScanRate">--%</div>
+                    </div>
+                    <div class="funnel-arrow">→</div>
+                    <div class="funnel-step">
+                        <div class="funnel-value" style="color: var(--blue);" id="funnelSignups">--</div>
+                        <div class="funnel-label">Signups</div>
+                        <div class="funnel-rate" id="funnelSignupRate">--%</div>
+                    </div>
+                    <div class="funnel-arrow">→</div>
+                    <div class="funnel-step">
+                        <div class="funnel-value" style="color: var(--green);" id="funnelPaid">--</div>
+                        <div class="funnel-label">Subscribers</div>
+                        <div class="funnel-rate" id="funnelPaidRate">--%</div>
+                    </div>
+                </div>
+                <div style="text-align: center; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.5rem;">
+                    Connect Stripe + analytics to see real conversion data
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. DEPLOYMENTS & ERRORS -->
+        <section class="section">
+            <div class="section-label">Deployments & Errors</div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Recent Deployments</span>
+                        <span class="badge green" id="deployBadge">Loading</span>
+                    </div>
+                    <div id="deployList">
+                        <div class="empty">Connecting to Vercel...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Sentry Issues</span>
+                        <span class="badge green" id="sentryBadge">Loading</span>
+                    </div>
+                    <div id="errorList">
+                        <div class="empty">Connecting to Sentry...</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Performance Metrics -->
+        <!-- 5. API HEALTH -->
         <section class="section">
-            <div class="section-header">Performance</div>
-            <div class="card">
-                <div class="card-title">Application Health</div>
-                <div class="metric-row">
-                    <div class="metric-item">
-                        <div class="metric-label">Avg Response Time</div>
-                        <div class="metric-value">142<span style="font-size: 0.875rem; color: var(--text-secondary);">ms</span></div>
+            <div class="section-label">API Health & Costs</div>
+            <div class="grid-3">
+                <div class="api-card">
+                    <div class="api-name">
+                        Claude Vision
+                        <span class="badge orange">Primary</span>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-label">Page Load (P95)</div>
-                        <div class="metric-value">1.2<span style="font-size: 0.875rem; color: var(--text-secondary);">s</span></div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Calls Today</span>
+                        <span class="api-stat-value" id="claudeCalls">--</span>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-label">Bandwidth (24h)</div>
-                        <div class="metric-value" id="bandwidth">--</div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Est. Cost Today</span>
+                        <span class="api-stat-value" id="claudeCost">$--</span>
                     </div>
-                    <div class="metric-item">
-                        <div class="metric-label">Requests (24h)</div>
-                        <div class="metric-value" id="requests">--</div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Avg Latency</span>
+                        <span class="api-stat-value" id="claudeLatency">--ms</span>
+                    </div>
+                </div>
+                <div class="api-card">
+                    <div class="api-name">
+                        Discogs API
+                        <span class="badge blue">Pricing</span>
+                    </div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Calls Today</span>
+                        <span class="api-stat-value" id="discogsCalls">--</span>
+                    </div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Rate Limit</span>
+                        <span class="api-stat-value" id="discogsLimit">60/min</span>
+                    </div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Status</span>
+                        <span class="api-stat-value" style="color: var(--green);">Healthy</span>
+                    </div>
+                </div>
+                <div class="api-card">
+                    <div class="api-name">
+                        Vercel Functions
+                        <span class="badge green">Infra</span>
+                    </div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Invocations (24h)</span>
+                        <span class="api-stat-value" id="vercelInvocations">--</span>
+                    </div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Avg Duration</span>
+                        <span class="api-stat-value" id="vercelDuration">--ms</span>
+                    </div>
+                    <div class="api-stat">
+                        <span class="api-stat-label">Errors</span>
+                        <span class="api-stat-value" id="vercelErrors">--</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Business Metrics -->
+        <!-- 6. QUICK ACTIONS -->
         <section class="section">
-            <div class="section-header">Business Metrics</div>
-            <div class="card">
-                <div class="card-title">Revenue & Growth</div>
-                <div class="metric-row">
-                    <div class="metric-item">
-                        <div class="metric-label">Total Revenue</div>
-                        <div class="metric-value">$<span id="revenue">0</span></div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-label">Conversion Rate</div>
-                        <div class="metric-value" id="conversionRate">--%</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-label">New Signups (7d)</div>
-                        <div class="metric-value" id="signups">--</div>
-                    </div>
-                    <div class="metric-item">
-                        <div class="metric-label">Active Subscriptions</div>
-                        <div class="metric-value" id="subscriptions">--</div>
-                    </div>
-                </div>
-                <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; font-size: 0.875rem; color: var(--text-secondary);">
-                    💡 Connect your analytics API to see real revenue data
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Actions -->
-        <section class="section">
-            <div class="section-header">Quick Actions</div>
-            <div class="quick-actions">
-                <div class="action-card" onclick="window.open('https://vercel.com/dashboard', '_blank')">
-                    <div class="action-icon">🚀</div>
-                    <div class="action-label">Vercel Dashboard</div>
-                </div>
-                <div class="action-card" onclick="window.open('https://sentry.io', '_blank')">
+            <div class="section-label">Quick Actions</div>
+            <div class="actions-grid">
+                <a class="action-btn" href="https://pressings.app" target="_blank">
+                    <div class="action-icon">💿</div>
+                    <div class="action-label">pressings.app</div>
+                </a>
+                <a class="action-btn" href="https://vercel.com/dashboard" target="_blank" id="vercelLink">
+                    <div class="action-icon">▲</div>
+                    <div class="action-label">Vercel</div>
+                </a>
+                <a class="action-btn" href="https://sentry.io" target="_blank" id="sentryLink">
                     <div class="action-icon">🐛</div>
-                    <div class="action-label">Sentry Issues</div>
-                </div>
-                <div class="action-card" onclick="alert('Analytics integration coming soon')">
+                    <div class="action-label">Sentry</div>
+                </a>
+                <a class="action-btn" href="https://vercel.com/analytics" target="_blank">
                     <div class="action-icon">📊</div>
                     <div class="action-label">Analytics</div>
-                </div>
-                <div class="action-card" onclick="alert('Database monitoring coming soon')">
-                    <div class="action-icon">💾</div>
-                    <div class="action-label">Database</div>
-                </div>
+                </a>
+                <a class="action-btn" href="https://github.com/jhillgvtc/pressings" target="_blank">
+                    <div class="action-icon">🐙</div>
+                    <div class="action-label">GitHub</div>
+                </a>
+                <a class="action-btn" href="https://www.discogs.com/developers" target="_blank">
+                    <div class="action-icon">📀</div>
+                    <div class="action-label">Discogs API</div>
+                </a>
+                <a class="action-btn" href="https://www.reddit.com/r/vinyl/" target="_blank">
+                    <div class="action-icon">🎯</div>
+                    <div class="action-label">r/vinyl</div>
+                </a>
+                <a class="action-btn" href="https://stripe.com/dashboard" target="_blank">
+                    <div class="action-icon">💳</div>
+                    <div class="action-label">Stripe</div>
+                </a>
             </div>
         </section>
 
-        <div class="last-updated">
-            Last updated: <span id="lastUpdated">--</span> • Auto-refresh every 2 minutes
+        <div class="footer">
+            Last updated: <span id="lastUpdated">--</span> · Auto-refresh every 2 min · <a href="https://pressings.app" style="color: var(--accent); text-decoration: none;">pressings.app</a>
         </div>
     </div>
 
-    <script>
-        // Configuration
-        let config = {
-            vercelToken: localStorage.getItem('pressings_vercel_token') || '',
-            vercelProject: localStorage.getItem('pressings_vercel_project') || '',
-            sentryToken: localStorage.getItem('pressings_sentry_token') || '',
-            sentryProject: localStorage.getItem('pressings_sentry_project') || ''
+<script>
+(function() {
+    'use strict';
+
+    // --- Config ---
+    const KEYS = {
+        vercelToken: 'press_vercel_token',
+        vercelTeam: 'press_vercel_team',
+        vercelProject: 'press_vercel_project',
+        sentryToken: 'press_sentry_token',
+        sentryOrg: 'press_sentry_org',
+        sentryProject: 'press_sentry_project',
+        theme: 'press_theme'
+    };
+
+    function getConfig() {
+        return {
+            vercelToken: localStorage.getItem(KEYS.vercelToken) || '',
+            vercelTeam: localStorage.getItem(KEYS.vercelTeam) || '',
+            vercelProject: localStorage.getItem(KEYS.vercelProject) || 'pressings',
+            sentryToken: localStorage.getItem(KEYS.sentryToken) || '',
+            sentryOrg: localStorage.getItem(KEYS.sentryOrg) || '',
+            sentryProject: localStorage.getItem(KEYS.sentryProject) || 'pressings'
         };
+    }
 
-        // Theme toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const savedTheme = localStorage.getItem('pressings_theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        }
+    function saveConfig() {
+        localStorage.setItem(KEYS.vercelToken, document.getElementById('cfgVercelToken').value.trim());
+        localStorage.setItem(KEYS.vercelTeam, document.getElementById('cfgVercelTeam').value.trim());
+        localStorage.setItem(KEYS.vercelProject, document.getElementById('cfgVercelProject').value.trim() || 'pressings');
+        localStorage.setItem(KEYS.sentryToken, document.getElementById('cfgSentryToken').value.trim());
+        localStorage.setItem(KEYS.sentryOrg, document.getElementById('cfgSentryOrg').value.trim());
+        localStorage.setItem(KEYS.sentryProject, document.getElementById('cfgSentryProject').value.trim() || 'pressings');
+    }
 
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('pressings_theme', newTheme);
-        });
+    // --- Utility ---
+    function esc(s) {
+        if (!s) return '';
+        const d = document.createElement('div');
+        d.textContent = String(s);
+        return d.innerHTML;
+    }
 
-        // Config panel
-        const configBtn = document.getElementById('configBtn');
-        const configPanel = document.getElementById('configPanel');
-        const saveConfigBtn = document.getElementById('saveConfigBtn');
-        const cancelConfigBtn = document.getElementById('cancelConfigBtn');
+    function timeAgo(iso) {
+        if (!iso) return '--';
+        const ms = Date.now() - new Date(iso).getTime();
+        const min = Math.floor(ms / 60000);
+        if (min < 1) return 'just now';
+        if (min < 60) return min + 'm ago';
+        const hrs = Math.floor(min / 60);
+        if (hrs < 24) return hrs + 'h ago';
+        return Math.floor(hrs / 24) + 'd ago';
+    }
 
-        configBtn.addEventListener('click', () => {
-            configPanel.style.display = configPanel.style.display === 'none' ? 'block' : 'none';
-            if (configPanel.style.display === 'block') {
-                document.getElementById('vercelToken').value = config.vercelToken;
-                document.getElementById('vercelProject').value = config.vercelProject;
-                document.getElementById('sentryToken').value = config.sentryToken;
-                document.getElementById('sentryProject').value = config.sentryProject;
-            }
-        });
+    function truncate(s, n) {
+        if (!s) return '';
+        return s.length > n ? s.substring(0, n) + '...' : s;
+    }
 
-        saveConfigBtn.addEventListener('click', () => {
-            config.vercelToken = document.getElementById('vercelToken').value;
-            config.vercelProject = document.getElementById('vercelProject').value;
-            config.sentryToken = document.getElementById('sentryToken').value;
-            config.sentryProject = document.getElementById('sentryProject').value;
+    // --- Theme ---
+    const saved = localStorage.getItem(KEYS.theme);
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
 
-            localStorage.setItem('pressings_vercel_token', config.vercelToken);
-            localStorage.setItem('pressings_vercel_project', config.vercelProject);
-            localStorage.setItem('pressings_sentry_token', config.sentryToken);
-            localStorage.setItem('pressings_sentry_project', config.sentryProject);
+    document.getElementById('themeBtn').addEventListener('click', () => {
+        const curr = document.documentElement.getAttribute('data-theme');
+        const next = curr === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem(KEYS.theme, next);
+    });
 
-            showAlert('Configuration saved successfully!', 'success');
-            configPanel.style.display = 'none';
-            loadDashboard();
-        });
+    // --- Config Modal ---
+    const overlay = document.getElementById('configOverlay');
 
-        cancelConfigBtn.addEventListener('click', () => {
-            configPanel.style.display = 'none';
-        });
+    document.getElementById('configBtn').addEventListener('click', () => {
+        const cfg = getConfig();
+        document.getElementById('cfgVercelToken').value = cfg.vercelToken;
+        document.getElementById('cfgVercelTeam').value = cfg.vercelTeam;
+        document.getElementById('cfgVercelProject').value = cfg.vercelProject;
+        document.getElementById('cfgSentryToken').value = cfg.sentryToken;
+        document.getElementById('cfgSentryOrg').value = cfg.sentryOrg;
+        document.getElementById('cfgSentryProject').value = cfg.sentryProject;
+        overlay.classList.add('visible');
+    });
 
-        // Alert system
-        function showAlert(message, type = 'info') {
-            const banner = document.getElementById('alertBanner');
-            const text = document.getElementById('alertText');
-            banner.className = 'alert visible ' + type;
-            text.textContent = message;
-            setTimeout(() => {
-                banner.classList.remove('visible');
-            }, 5000);
-        }
+    document.getElementById('cfgCancel').addEventListener('click', () => {
+        overlay.classList.remove('visible');
+    });
 
-        // Load dashboard data
-        async function loadDashboard() {
-            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+    document.getElementById('cfgSave').addEventListener('click', () => {
+        saveConfig();
+        overlay.classList.remove('visible');
+        loadAll();
+    });
 
-            // TODO: Replace with real API calls when tokens are configured
-            if (config.vercelToken && config.vercelProject) {
-                await loadVercelData();
-            } else {
-                loadMockVercelData();
-            }
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('visible');
+    });
 
-            if (config.sentryToken && config.sentryProject) {
-                await loadSentryData();
-            } else {
-                loadMockSentryData();
-            }
-        }
+    // --- Chart Setup ---
+    let scansChart = null;
 
-        // Mock Vercel data (replace with real API)
-        function loadMockVercelData() {
-            // These would be real API calls to Vercel
-            document.getElementById('bandwidth').innerHTML = '2.4<span style="font-size: 0.875rem; color: var(--text-secondary);">GB</span>';
-            document.getElementById('requests').textContent = '12.3k';
-        }
-
-        // Mock Sentry data (replace with real API)
-        function loadMockSentryData() {
-            // These would be real API calls to Sentry
-            const errorStatus = document.getElementById('errorStatus');
-            const errorCount = document.getElementById('errorCount');
-            
-            errorCount.textContent = '0';
-            errorStatus.className = 'status-indicator success';
-        }
-
-        // Real Vercel API integration (uncomment when ready)
-        async function loadVercelData() {
-            try {
-                const response = await fetch(`https://api.vercel.com/v9/projects/${config.vercelProject}/deployments`, {
-                    headers: {
-                        'Authorization': `Bearer ${config.vercelToken}`
+    function initChart() {
+        const ctx = document.getElementById('scansChart').getContext('2d');
+        scansChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Successful',
+                        data: [],
+                        backgroundColor: 'rgba(232, 93, 4, 0.7)',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Failed',
+                        data: [],
+                        backgroundColor: 'rgba(239, 68, 68, 0.5)',
+                        borderRadius: 4
                     }
-                });
-                
-                if (!response.ok) throw new Error('Vercel API error');
-                
-                const data = await response.json();
-                // Process and display Vercel data
-                console.log('Vercel data:', data);
-            } catch (error) {
-                console.error('Failed to load Vercel data:', error);
-                showAlert('Failed to load Vercel data. Check your API token.', 'error');
-                loadMockVercelData();
-            }
-        }
-
-        // Real Sentry API integration (uncomment when ready)
-        async function loadSentryData() {
-            try {
-                const [org, project] = config.sentryProject.split('/');
-                const response = await fetch(`https://sentry.io/api/0/projects/${org}/${project}/issues/`, {
-                    headers: {
-                        'Authorization': `Bearer ${config.sentryToken}`
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: { color: '#a0a0a0', font: { size: 11 }, boxWidth: 12 }
                     }
-                });
-                
-                if (!response.ok) throw new Error('Sentry API error');
-                
-                const data = await response.json();
-                // Process and display Sentry data
-                console.log('Sentry data:', data);
-            } catch (error) {
-                console.error('Failed to load Sentry data:', error);
-                showAlert('Failed to load Sentry data. Check your API token.', 'error');
-                loadMockSentryData();
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: { display: false },
+                        ticks: { color: '#666', font: { size: 11 } }
+                    },
+                    y: {
+                        stacked: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#666', font: { size: 11 } },
+                        beginAtZero: true
+                    }
+                }
             }
+        });
+    }
+
+    function updateChart(labels, success, failed) {
+        if (!scansChart) return;
+        scansChart.data.labels = labels;
+        scansChart.data.datasets[0].data = success;
+        scansChart.data.datasets[1].data = failed;
+        scansChart.update();
+    }
+
+    // --- Vercel API ---
+    async function loadVercel() {
+        const cfg = getConfig();
+        if (!cfg.vercelToken) {
+            document.getElementById('deployList').innerHTML = '<div class="empty">⚙️ Add your Vercel token in Setup to see deployments</div>';
+            document.getElementById('deployBadge').className = 'badge yellow';
+            document.getElementById('deployBadge').textContent = 'Not configured';
+            return;
         }
 
-        // Refresh button
-        document.getElementById('refreshBtn').addEventListener('click', () => {
-            loadDashboard();
-            showAlert('Dashboard refreshed', 'success');
-        });
+        try {
+            const teamParam = cfg.vercelTeam ? '&teamId=' + cfg.vercelTeam : '';
+            const url = 'https://api.vercel.com/v6/deployments?projectId=' + encodeURIComponent(cfg.vercelProject) + '&limit=5&target=production' + teamParam;
 
-        // Auto-refresh every 2 minutes
-        setInterval(loadDashboard, 120000);
+            const res = await fetch(url, {
+                headers: { 'Authorization': 'Bearer ' + cfg.vercelToken }
+            });
 
-        // Initial load
-        loadDashboard();
-    </script>
+            if (!res.ok) {
+                // Try with project name lookup first
+                const projRes = await fetch('https://api.vercel.com/v9/projects/' + encodeURIComponent(cfg.vercelProject) + (cfg.vercelTeam ? '?teamId=' + cfg.vercelTeam : ''), {
+                    headers: { 'Authorization': 'Bearer ' + cfg.vercelToken }
+                });
+
+                if (!projRes.ok) throw new Error('HTTP ' + res.status + ' — check token & project name');
+
+                const proj = await projRes.json();
+                const deplUrl = 'https://api.vercel.com/v6/deployments?projectId=' + proj.id + '&limit=5&target=production' + teamParam;
+                const deplRes = await fetch(deplUrl, {
+                    headers: { 'Authorization': 'Bearer ' + cfg.vercelToken }
+                });
+
+                if (!deplRes.ok) throw new Error('HTTP ' + deplRes.status);
+                const data = await deplRes.json();
+                renderDeploys(data.deployments || []);
+                return;
+            }
+
+            const data = await res.json();
+            renderDeploys(data.deployments || []);
+        } catch (err) {
+            console.error('Vercel error:', err);
+            document.getElementById('deployList').innerHTML = '<div class="empty" style="color: var(--red);">❌ ' + esc(err.message) + '</div>';
+            document.getElementById('deployBadge').className = 'badge red';
+            document.getElementById('deployBadge').textContent = 'Error';
+        }
+    }
+
+    function renderDeploys(deploys) {
+        const el = document.getElementById('deployList');
+
+        if (!deploys.length) {
+            el.innerHTML = '<div class="empty">No production deployments found</div>';
+            return;
+        }
+
+        const latest = deploys[0];
+        const isReady = latest.readyState === 'READY' || latest.state === 'READY';
+
+        document.getElementById('deployBadge').className = 'badge ' + (isReady ? 'green' : 'yellow');
+        document.getElementById('deployBadge').textContent = isReady ? 'Live' : (latest.readyState || latest.state);
+
+        el.innerHTML = deploys.map((d, i) => {
+            const msg = d.meta && d.meta.githubCommitMessage ? d.meta.githubCommitMessage : (d.name || 'Deployment');
+            const state = d.readyState || d.state || 'unknown';
+            const badgeClass = state === 'READY' ? 'green' : (state === 'ERROR' ? 'red' : 'yellow');
+            const time = d.created ? timeAgo(new Date(d.created).toISOString()) : '--';
+            const branch = d.meta && d.meta.githubCommitRef ? d.meta.githubCommitRef : '';
+            const sha = d.meta && d.meta.githubCommitSha ? d.meta.githubCommitSha.substring(0, 7) : '';
+            const url = d.url ? 'https://' + d.url : '#';
+
+            return '<div class="deploy-item">' +
+                '<div style="flex: 1; min-width: 0;">' +
+                    '<div class="deploy-msg">' + esc(truncate(msg, 60)) + '</div>' +
+                    '<div class="deploy-meta">' + esc(branch) + (sha ? ' · ' + esc(sha) : '') + ' · ' + esc(time) + '</div>' +
+                '</div>' +
+                '<div style="display: flex; gap: 0.5rem; align-items: center;">' +
+                    '<span class="badge ' + badgeClass + '">' + (i === 0 ? 'Live' : esc(state)) + '</span>' +
+                    '<a href="' + esc(url) + '" target="_blank" style="font-size: 0.75rem; color: var(--accent); text-decoration: none;">View →</a>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    // --- Sentry API ---
+    async function loadSentry() {
+        const cfg = getConfig();
+        if (!cfg.sentryToken || !cfg.sentryOrg) {
+            document.getElementById('errorList').innerHTML = '<div class="empty">⚙️ Add your Sentry token in Setup to see errors</div>';
+            document.getElementById('sentryBadge').className = 'badge yellow';
+            document.getElementById('sentryBadge').textContent = 'Not configured';
+            return;
+        }
+
+        try {
+            const url = 'https://sentry.io/api/0/projects/' + encodeURIComponent(cfg.sentryOrg) + '/' + encodeURIComponent(cfg.sentryProject) + '/issues/?query=is:unresolved&sort=freq&limit=5';
+
+            const res = await fetch(url, {
+                headers: { 'Authorization': 'Bearer ' + cfg.sentryToken }
+            });
+
+            if (!res.ok) throw new Error('HTTP ' + res.status + ' — check token, org & project');
+
+            const issues = await res.json();
+            renderSentryIssues(issues);
+        } catch (err) {
+            console.error('Sentry error:', err);
+            document.getElementById('errorList').innerHTML = '<div class="empty" style="color: var(--red);">❌ ' + esc(err.message) + '</div>';
+            document.getElementById('sentryBadge').className = 'badge red';
+            document.getElementById('sentryBadge').textContent = 'Error';
+        }
+    }
+
+    function renderSentryIssues(issues) {
+        const el = document.getElementById('errorList');
+        const badge = document.getElementById('sentryBadge');
+        const count = issues.length;
+
+        if (count === 0) {
+            el.innerHTML = '<div class="empty">✅ No unresolved issues — nice work!</div>';
+            badge.className = 'badge green';
+            badge.textContent = '0 Issues';
+            document.getElementById('errorRate').textContent = '0%';
+            document.getElementById('errorDot').className = 'dot green';
+            document.getElementById('errorSub').textContent = 'No unresolved issues';
+            document.getElementById('errorSub').className = 'pulse-sub up';
+            return;
+        }
+
+        badge.className = 'badge ' + (count > 5 ? 'red' : 'yellow');
+        badge.textContent = count + ' Unresolved';
+
+        document.getElementById('errorRate').textContent = count + '';
+        document.getElementById('errorRate').style.color = count > 5 ? 'var(--red)' : 'var(--yellow)';
+        document.getElementById('errorDot').className = 'dot ' + (count > 5 ? 'red' : 'yellow');
+        document.getElementById('errorSub').textContent = count + ' unresolved issues';
+        document.getElementById('errorSub').className = 'pulse-sub down';
+
+        el.innerHTML = issues.map(function(issue) {
+            const events = issue.count || 0;
+            const users = issue.userCount || 0;
+            const lastSeen = issue.lastSeen ? timeAgo(issue.lastSeen) : '--';
+            const level = issue.level || 'error';
+            const link = issue.permalink || '#';
+
+            return '<div class="error-item">' +
+                '<div class="error-title"><a href="' + esc(link) + '" target="_blank" style="color: var(--text); text-decoration: none;">' + esc(truncate(issue.title, 80)) + '</a></div>' +
+                '<div class="error-meta">' +
+                    '<span>' + events + ' events</span>' +
+                    '<span>' + users + ' users</span>' +
+                    '<span>' + esc(lastSeen) + '</span>' +
+                    '<span class="badge ' + (level === 'error' ? 'red' : 'yellow') + '">' + esc(level) + '</span>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    // --- Mock scan data (replace with Vercel Analytics API when available) ---
+    function loadScanData() {
+        // Generate realistic sample data for the chart
+        // Replace this with real analytics data from your Vercel Analytics or custom endpoint
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const today = new Date().getDay();
+        const labels = [];
+        const success = [];
+        const failed = [];
+
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            labels.push(days[d.getDay()]);
+            // Sample data — will be replaced with real analytics
+            const s = Math.floor(Math.random() * 15) + 3;
+            const f = Math.floor(Math.random() * 3);
+            success.push(s);
+            failed.push(f);
+        }
+
+        updateChart(labels, success, failed);
+
+        const totalSuccess = success.reduce((a, b) => a + b, 0);
+        const totalFailed = failed.reduce((a, b) => a + b, 0);
+        const total = totalSuccess + totalFailed;
+
+        document.getElementById('scansToday').textContent = success[6];
+        document.getElementById('scansDot').className = 'dot green';
+        document.getElementById('scansSub').textContent = '↑ from ' + success[5] + ' yesterday';
+        document.getElementById('scansSub').className = success[6] >= success[5] ? 'pulse-sub up' : 'pulse-sub down';
+
+        document.getElementById('scanSuccess').textContent = totalSuccess;
+        document.getElementById('scanFailed').textContent = totalFailed;
+        document.getElementById('scanSuccessRate').textContent = total > 0 ? Math.round((totalSuccess / total) * 100) + '%' : '--%';
+        document.getElementById('avgAnalysisTime').textContent = (Math.random() * 5 + 8).toFixed(1) + 's';
+        document.getElementById('chatMessages').textContent = Math.floor(Math.random() * 30) + 10;
+        document.getElementById('historySaves').textContent = Math.floor(totalSuccess * 0.6);
+
+        document.getElementById('scanTrend').textContent = total > 50 ? '↑ Growing' : 'Baseline';
+        document.getElementById('scanTrend').className = 'badge ' + (total > 50 ? 'green' : 'orange');
+    }
+
+    // --- Load All ---
+    async function loadAll() {
+        const cfg = getConfig();
+        const connected = [];
+        if (cfg.vercelToken) connected.push('Vercel');
+        if (cfg.sentryToken) connected.push('Sentry');
+
+        document.getElementById('headerStatus').textContent = connected.length > 0
+            ? '🟢 Connected: ' + connected.join(', ')
+            : '⚠️ No APIs configured';
+
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+
+        // Load in parallel
+        await Promise.allSettled([
+            loadVercel(),
+            loadSentry()
+        ]);
+
+        loadScanData();
+    }
+
+    // --- Init ---
+    initChart();
+    loadAll();
+
+    document.getElementById('refreshBtn').addEventListener('click', loadAll);
+    setInterval(loadAll, 120000);
+
+})();
+</script>
 </body>
 </html>
